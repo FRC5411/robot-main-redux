@@ -37,10 +37,10 @@ public class Swerve extends SubsystemBase {
     gyro.clearStickyFaults();
     zeroHeading();
 
-    FL = new SwerveModule("Front Left", SwerveConstants.FRModule.constants);
+    FL = new SwerveModule("Front Left", SwerveConstants.FLModule.constants);
     FR = new SwerveModule("Front Right", SwerveConstants.FRModule.constants);
-    BL = new SwerveModule("Back Left)", SwerveConstants.FRModule.constants);
-    BR = new SwerveModule("Back Right", SwerveConstants.FRModule.constants);
+    BL = new SwerveModule("Back Left", SwerveConstants.BLModule.constants);
+    BR = new SwerveModule("Back Right", SwerveConstants.BRModule.constants);
 
     modules = new SwerveModule[]{FL, FR, BL, BR};
 
@@ -71,8 +71,7 @@ public class Swerve extends SubsystemBase {
     gyro.setYaw(0);
   }
 
-  public void drive(
-    Translation2d translation, double rotation, boolean fieldRelative) {
+  public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     SwerveModuleState[] swerveModuleStates =
       kinematics.toSwerveModuleStates(
           fieldRelative
@@ -84,7 +83,6 @@ public class Swerve extends SubsystemBase {
     for(int i = 0; i < 4; i++){
       modules[i].setModuleState(swerveModuleStates[i]);
     }
-
   }
 
   public SwerveModuleState[] getSwerveModuleStates() {

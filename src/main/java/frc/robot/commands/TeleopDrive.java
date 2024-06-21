@@ -11,8 +11,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Swerve;
-import frc.robot.subsystems.SwerveConstants;
-
 public class TeleopDrive extends Command {
   private Swerve drive;
   private DoubleSupplier x;
@@ -46,8 +44,8 @@ public class TeleopDrive extends Command {
     double thetaVal = thetaLimiter.calculate(theta.getAsDouble());
 
     drive.drive(
-      new Translation2d(xVal, yVal).times(SwerveConstants.maxLinearSpeed), 
-      thetaVal * 45, 
+      new Translation2d(xVal, yVal), 
+      thetaVal, 
       !field.getAsBoolean()
       );
   }

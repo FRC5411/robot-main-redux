@@ -52,7 +52,7 @@ public class SwerveModule {
 
         driveMotor.restoreFactoryDefaults();
         driveMotor.setSmartCurrentLimit(60);
-        driveMotor.setIdleMode(IdleMode.kCoast);
+        driveMotor.setIdleMode(IdleMode.kBrake);
         driveMotor.enableVoltageCompensation(12);
         driveEncoder.setPositionConversionFactor(SwerveConstants.driveConversionPositionFactor);
         driveEncoder.setVelocityConversionFactor(SwerveConstants.driveConversionVelocityFactor);
