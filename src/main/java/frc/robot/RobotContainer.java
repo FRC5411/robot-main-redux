@@ -20,7 +20,13 @@ public class RobotContainer {
   private final Swerve swerve = new Swerve();
 
   public RobotContainer() {
-    swerve.setDefaultCommand(new TeleopDrive(swerve, () -> applyDeadband(pilot.getLeftX()), () -> applyDeadband(pilot.getLeftY()), () -> applyDeadband(pilot.getRightX()), () -> pilot.y().getAsBoolean()));
+    swerve.setDefaultCommand(
+      new TeleopDrive(
+        swerve, 
+        () -> applyDeadband(pilot.getLeftY()), 
+        () -> applyDeadband(pilot.getLeftX()), 
+        () -> applyDeadband(pilot.getRightX()), 
+        () -> pilot.y().getAsBoolean()));
     configureBindings();
   }
 

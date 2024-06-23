@@ -19,7 +19,7 @@ public class SwerveConstants{
     public static final int pigeonID = 10;
     
     //TODO: Find Gear Ratios
-    public static final double driveGearRatio = 0 ;
+    public static final double driveGearRatio = 0;
     public static final double angleGearRatio = 0;
 
     public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
@@ -35,7 +35,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 11;
       public static final int angleMotorID = 15;
       public static final int canCoderID = 2;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(53.58);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(53.58);
       public static final ModuleConstants constants =
           new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
     }
@@ -44,7 +44,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 16;
       public static final int canCoderID = 3;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-19.78);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-19.78);
       public static final ModuleConstants constants =
           new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
     }
@@ -53,7 +53,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 13;
       public static final int angleMotorID = 17;
       public static final int canCoderID = 4;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-41.07);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-41.07);
       public static final ModuleConstants constants =
           new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
     }
@@ -62,7 +62,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 14;
       public static final int angleMotorID = 18;
       public static final int canCoderID = 5;
-      public static final Rotation2d angleOffset = Rotation2d.fromDegrees(90.93);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(90.93);
       public static final ModuleConstants constants =
           new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
     }
