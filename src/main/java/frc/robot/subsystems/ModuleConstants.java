@@ -12,13 +12,23 @@ public class ModuleConstants {
     public final int encoderID;
     public final boolean azimuthFlipped;
     public final boolean driveFlipped;
+    public final boolean absoulteFlipped;
 
-    public ModuleConstants(int azimuthID, int driveID, int encoderID, double offset, boolean azimuthFlipped, boolean driveFlipped){
+    public ModuleConstants(
+        int azimuthID, 
+        int driveID, 
+        int encoderID, 
+        double offset, 
+        boolean azimuthFlipped, 
+        boolean driveFlipped,
+        boolean absoluteFlipped){
+
         this.azimuthID = azimuthID;
         this.driveID = driveID;
         this.encoderID = encoderID;
         this.offset = offset;
         this.azimuthFlipped = azimuthFlipped;
         this.driveFlipped = driveFlipped;
+        this.absoulteFlipped = absoluteFlipped;
     }
 }

@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,6 +30,7 @@ public class Swerve extends SubsystemBase {
   private final SwerveDriveOdometry odometry;
 
   private final SwerveModule[] modules;
+  private final Field2d field2d;
 
 
 
@@ -51,6 +53,10 @@ public class Swerve extends SubsystemBase {
       new Translation2d(-SwerveConstants.wheelBase / 2.0, -SwerveConstants.trackWidth / 2.0));
     
     odometry = new SwerveDriveOdometry(kinematics, getYaw(), getSwerveModulePositions());
+
+    field2d = new Field2d();
+
+    SmartDashboard.putData(field2d);
   }
 
   public Rotation2d getYaw(){
@@ -109,11 +115,15 @@ public class Swerve extends SubsystemBase {
     odometry.update(getYaw(), getSwerveModulePositions());
 
     for (SwerveModule mod : modules) {
-      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Cancoder", mod.getCANCoder().getAbsolutePosition().getValueAsDouble());
-      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Integrated", mod.getModuleState().angle.getDegrees());
-      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Velocity", mod.getModuleState().speedMetersPerSecond);
+      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Cancoder Posistion: ", mod.getCANCoder().getAbsolutePosition().getValueAsDouble());
+      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Azimuth Posistion: ", mod.getModuleState().angle.getDegrees());
+      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Drive Velocity", mod.getModuleState().speedMetersPerSecond);
     }
 
-    SmartDashboard.putNumber("Robot Yaw", getYaw().getDegrees());
+    SmartDashboard.putNumber("Robot Yaw: ", getYaw().getDegrees());
+
+    field2d.setRobotPose(getPose());
+
+
   }
 }

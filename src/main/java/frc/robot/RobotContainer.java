@@ -31,7 +31,7 @@ public class RobotContainer {
   }
 
   public double applyDeadband(double input){
-    if(Math.abs(input) < 0.5){
+    if(Math.abs(input) < 0.2){
       return 0;
     }
 

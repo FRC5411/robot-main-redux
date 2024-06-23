@@ -15,7 +15,6 @@ public class SwerveConstants{
 
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
-    //TODO: Find Pigeon ID
     public static final int pigeonID = 10;
     
     //TODO: Find Gear Ratios
@@ -37,7 +36,7 @@ public class SwerveConstants{
       public static final int canCoderID = 2;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(53.58);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
     }
 
     public final class FRModule{
@@ -46,7 +45,7 @@ public class SwerveConstants{
       public static final int canCoderID = 3;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(-19.78);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
     }
 
     public final class BLModule{
@@ -55,7 +54,7 @@ public class SwerveConstants{
       public static final int canCoderID = 4;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(-41.07);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
     }
 
     public final class BRModule{
@@ -64,7 +63,7 @@ public class SwerveConstants{
       public static final int canCoderID = 5;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(90.93);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
     }
     
 }   
