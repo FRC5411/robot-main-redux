@@ -12,7 +12,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Constants;
 
 /** Add your docs here. */
 public class SwerveModule {
@@ -97,7 +99,6 @@ public class SwerveModule {
 
         state = SwerveModuleState.optimize(state, getModuleState().angle);
 
-        //TODO: CHECK
         driveMotor.set(state.speedMetersPerSecond / SwerveConstants.maxLinearSpeed);
         azimuthMotor.set(angleController.calculate(getAzimuthPosistion(), state.angle.getRadians()));
 
