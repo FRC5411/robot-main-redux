@@ -13,9 +13,11 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 
 /** Add your docs here. */
-public class SwerveModule {
+public class SwerveModule extends SubsystemBase{
     public String idName;
     private CANSparkMax azimuthMotor;
     private CANSparkMax driveMotor;
@@ -28,6 +30,10 @@ public class SwerveModule {
 
     private final PIDController angleController;
 
+    public static LoggedTunableNumber kAzimuthP;
+    public static LoggedTunableNumber kAzimuthD;
+
+
     public SwerveModule(String idName, ModuleConstants constants){
         this.idName = idName;
 
@@ -38,7 +44,9 @@ public class SwerveModule {
         absoluteEncoder = new CANcoder(constants.encoderID);
         offset = new Rotation2d(constants.offset);
         // TODO: Tune angle controller
-        angleController = new PIDController(0.01, 0, 0);
+        angleController = constants.angleController;
+        kAzimuthP = new LoggedTunableNumber("Module " + idName + " Azimuth P", angleController.getP());
+        kAzimuthD = new LoggedTunableNumber("Module " + idName + " Azimuth D", angleController.getD());
         config();
 
     }
@@ -86,6 +94,12 @@ public class SwerveModule {
         return azimuthEncoder.getPosition();
     }
 
+    public void setAzimuthPIDController(double p, double i, double d){
+        angleController.setP(p);
+        angleController.setI(i);
+        angleController.setD(d);
+    }
+
 
     public void setModuleState(SwerveModuleState state){
         // Will stop any jittering from occuring in the swerve wheels // 
@@ -118,5 +132,12 @@ public class SwerveModule {
     public double getDistance(){
         //TODO: Check if correct
         return driveEncoder.getPosition() / driveEncoder.getCountsPerRevolution() * (Math.PI * SwerveConstants.wheelDiameter);
+    }
+
+    public void periodic(){
+        LoggedTunableNumber.ifChanged(
+            hashCode(), 
+            () -> {setAzimuthPIDController(angleController.getP(), 0, 0);}, 
+            kAzimuthP, kAzimuthD);
     }
 }

@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -35,8 +36,9 @@ public class SwerveConstants{
       public static final int angleMotorID = 15;
       public static final int canCoderID = 2;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(53.58);
+      public static final PIDController angleController = new PIDController(0.01, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController,false, false, false);
     }
 
     public final class FRModule{
@@ -44,8 +46,9 @@ public class SwerveConstants{
       public static final int angleMotorID = 16;
       public static final int canCoderID = 3;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(-19.78);
+      public static final PIDController angleController = new PIDController(0.01, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController, false, false, false);
     }
 
     public final class BLModule{
@@ -53,8 +56,9 @@ public class SwerveConstants{
       public static final int angleMotorID = 17;
       public static final int canCoderID = 4;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(-41.07);
+      public static final PIDController angleController = new PIDController(0.01, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController, false, false, false);
     }
 
     public final class BRModule{
@@ -62,8 +66,9 @@ public class SwerveConstants{
       public static final int angleMotorID = 18;
       public static final int canCoderID = 5;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(90.93);
+      public static final PIDController angleController = new PIDController(0.01, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), false, false, false);
+          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController, false, false, false);
     }
     
 }   
