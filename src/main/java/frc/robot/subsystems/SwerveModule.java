@@ -137,7 +137,7 @@ public class SwerveModule extends SubsystemBase{
     public void periodic(){
         LoggedTunableNumber.ifChanged(
             hashCode(), 
-            () -> {setAzimuthPIDController(angleController.getP(), 0, 0);}, 
+            () -> {setAzimuthPIDController(kAzimuthP.get(), (0), kAzimuthD.get());}, 
             kAzimuthP, kAzimuthD);
     }
 }
