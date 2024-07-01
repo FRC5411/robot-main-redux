@@ -41,7 +41,7 @@ public class TeleopDrive extends Command {
   public void execute() {
     double xVal = xLimiter.calculate(x.getAsDouble());
     double yVal = yLimiter.calculate(y.getAsDouble());
-    double thetaVal = thetaLimiter.calculate(theta.getAsDouble());
+    double thetaVal = thetaLimiter.calculate(theta.getAsDouble()); 
 
     drive.drive(
       new Translation2d(xVal, yVal), 

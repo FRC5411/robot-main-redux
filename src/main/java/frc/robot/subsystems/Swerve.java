@@ -60,6 +60,8 @@ public class Swerve extends SubsystemBase {
     field2d = new Field2d();
 
     SmartDashboard.putData(field2d);
+
+    kDriftRate = new LoggedTunableNumber("Drift Rate", SwerveConstants.driftRate);
   }
 
   public Rotation2d getYaw(){
@@ -81,12 +83,24 @@ public class Swerve extends SubsystemBase {
   }
 
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
-    SwerveModuleState[] swerveModuleStates =
-      kinematics.toSwerveModuleStates(
-          fieldRelative
-              ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                  translation.getX(), translation.getY(), rotation, getYaw())
-              : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
+    final SwerveModuleState[] swerveModuleStates;
+      if(fieldRelative){
+        swerveModuleStates = kinematics.toSwerveModuleStates(
+          discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
+            translation.getX(), 
+            translation.getY(), 
+            rotation, 
+            getYaw())));
+      }
+
+      else{
+        swerveModuleStates = kinematics.toSwerveModuleStates(
+          discretize(new ChassisSpeeds(
+            translation.getX(), 
+            translation.getY(), 
+            rotation)));
+      }
+
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveConstants.maxLinearSpeed);
 
     for(int i = 0; i < 4; i++){

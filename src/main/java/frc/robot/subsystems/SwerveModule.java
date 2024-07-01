@@ -72,6 +72,8 @@ public class SwerveModule extends SubsystemBase{
 
         resetAzimuthPosistion();
 
+        angleController.enableContinuousInput(-Math.PI, Math.PI);
+
     }
 
     public double getAbsoultePosistion(){

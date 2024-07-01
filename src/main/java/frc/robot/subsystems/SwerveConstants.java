@@ -29,6 +29,8 @@ public class SwerveConstants{
     // TODO: Find accurate max linear speed as this is a rough estimate
     public static final int maxLinearSpeed  = 5;
 
+    public static final int driftRate = 1;
+
 
     //TODO: ID all of the modules and find offsets
     public final class FLModule{
