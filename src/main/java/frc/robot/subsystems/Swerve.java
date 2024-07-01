@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.LoggedTunableNumber;
 
 public class Swerve extends SubsystemBase {
   /** Creates a new Swerve. */
@@ -31,6 +32,8 @@ public class Swerve extends SubsystemBase {
 
   private final SwerveModule[] modules;
   private final Field2d field2d;
+
+  private static LoggedTunableNumber kDriftRate;
 
 
 
@@ -91,6 +94,17 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  private ChassisSpeeds discretize(ChassisSpeeds speeds) {
+    double dt = 0.02;
+    var desiredDeltaPose = new Pose2d(
+        speeds.vxMetersPerSecond * dt,
+        speeds.vyMetersPerSecond * dt,
+        new Rotation2d(speeds.omegaRadiansPerSecond * dt * kDriftRate.get()));
+    var twist = new Pose2d().log(desiredDeltaPose);
+
+    return new ChassisSpeeds((twist.dx / dt), (twist.dy / dt), (speeds.omegaRadiansPerSecond));
+}
+
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
 
@@ -109,7 +123,6 @@ public class Swerve extends SubsystemBase {
     odometry.resetPosition(getYaw(), getSwerveModulePositions(), pose);
   }
 
-
   @Override
   public void periodic() {
     odometry.update(getYaw(), getSwerveModulePositions());
@@ -123,6 +136,11 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("Robot Yaw: ", getYaw().getDegrees());
 
     field2d.setRobotPose(getPose());
+
+    LoggedTunableNumber.ifChanged(
+      hashCode(), 
+      () -> {kDriftRate.get();}, 
+      kDriftRate);
 
 
   }
