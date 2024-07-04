@@ -82,6 +82,12 @@ public class Swerve extends SubsystemBase {
     gyro.setYaw(0);
   }
 
+  public void moveDriveVolts(double demand){
+    for(int i = 0; i < 4; i++){
+      modules[i].setDriveVoltage(demand);
+    }
+  }
+
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     final SwerveModuleState[] swerveModuleStates;
       if(fieldRelative){

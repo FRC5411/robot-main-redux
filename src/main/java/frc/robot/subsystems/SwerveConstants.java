@@ -10,8 +10,8 @@ import edu.wpi.first.math.util.Units;
 
 public class SwerveConstants{
   // TODO: Find out these measurements from zesty CAD team
-    public static final double trackWidth = Units.inchesToMeters(22);
-    public static final double wheelBase = Units.inchesToMeters(22);
+    public static final double trackWidth = Units.inchesToMeters(27);
+    public static final double wheelBase = Units.inchesToMeters(27);
     public static final double wheelDiameter = Units.inchesToMeters(3.95); // 3.8897
 
     public static final double wheelCircumference = wheelDiameter * Math.PI;
@@ -40,8 +40,18 @@ public class SwerveConstants{
       public static final int canCoderID = 2;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(53.58);
       public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController,false, false, false);
+          new ModuleConstants(
+            angleMotorID, 
+            driveMotorID, 
+            canCoderID, 
+            angleOffset.getDegrees(), 
+            angleController,
+            driveController,
+            false,
+            false, 
+            false);
     }
 
     public final class FRModule{
@@ -50,8 +60,18 @@ public class SwerveConstants{
       public static final int canCoderID = 3;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(-19.78);
       public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController, false, false, false);
+          new ModuleConstants(
+            angleMotorID, 
+            driveMotorID, 
+            canCoderID, 
+            angleOffset.getDegrees(), 
+            angleController,
+            driveController,
+            false,
+            false, 
+            false);
     }
 
     public final class BLModule{
@@ -60,8 +80,18 @@ public class SwerveConstants{
       public static final int canCoderID = 4;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(-41.07);
       public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController, false, false, false);
+          new ModuleConstants(
+            angleMotorID, 
+            driveMotorID, 
+            canCoderID, 
+            angleOffset.getDegrees(), 
+            angleController,
+            driveController,
+            false,
+            false, 
+            false);
     }
 
     public final class BRModule{
@@ -70,8 +100,18 @@ public class SwerveConstants{
       public static final int canCoderID = 5;
       public static final Rotation2d angleOffset = Rotation2d.fromRotations(90.93);
       public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
-          new ModuleConstants(angleMotorID, driveMotorID, canCoderID, angleOffset.getDegrees(), angleController, false, false, false);
+          new ModuleConstants(
+            angleMotorID, 
+            driveMotorID, 
+            canCoderID, 
+            angleOffset.getDegrees(), 
+            angleController,
+            driveController,
+            false,
+            false, 
+            false);
     }
     
 }   

@@ -7,13 +7,16 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import frc.robot.util.LoggedTunableNumber;
 
 /** Add your docs here. */
@@ -28,14 +31,17 @@ public class SwerveModule extends SubsystemBase{
 
     private Rotation2d offset;
 
-    private final PIDController angleController;
+    private final SparkPIDController angleController;
 
     public static LoggedTunableNumber kAzimuthP;
     public static LoggedTunableNumber kAzimuthD;
 
+    public ModuleConstants constants;
+
 
     public SwerveModule(String idName, ModuleConstants constants){
         this.idName = idName;
+        this.constants = constants;
 
         azimuthMotor = new CANSparkMax(constants.azimuthID, MotorType.kBrushless);
         driveMotor = new CANSparkMax(constants.driveID, MotorType.kBrushless);
@@ -43,17 +49,21 @@ public class SwerveModule extends SubsystemBase{
         azimuthEncoder = azimuthMotor.getEncoder();
         absoluteEncoder = new CANcoder(constants.encoderID);
         offset = new Rotation2d(constants.offset);
+
         // TODO: Tune angle controller
-        angleController = constants.angleController;
+        angleController = azimuthMotor.getPIDController();
+        configAngleController();
+
         kAzimuthP = new LoggedTunableNumber("Module " + idName + " Azimuth P", angleController.getP());
         kAzimuthD = new LoggedTunableNumber("Module " + idName + " Azimuth D", angleController.getD());
+
         config();
 
     }
 
     private void config(){
         azimuthMotor.restoreFactoryDefaults();
-        azimuthMotor.setSmartCurrentLimit(20);
+        azimuthMotor.setSmartCurrentLimit(30);
         azimuthMotor.setIdleMode(IdleMode.kCoast);
         azimuthMotor.enableVoltageCompensation(12);
         azimuthEncoder.setPositionConversionFactor(SwerveConstants.angleConversionFactor);
@@ -72,16 +82,28 @@ public class SwerveModule extends SubsystemBase{
 
         resetAzimuthPosistion();
 
-        angleController.enableContinuousInput(-Math.PI, Math.PI);
+    }
 
+    private void configAngleController(){
+        angleController.setP(constants.angleController.getP());
+        angleController.setI(constants.angleController.getI());
+        angleController.setD(constants.angleController.getD());
+
+        angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
+        angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
+        angleController.setPositionPIDWrappingEnabled(true);
+
+        angleController.setFeedbackDevice(azimuthEncoder);
+
+        azimuthMotor.burnFlash();
     }
 
     public double getAbsoultePosistion(){
-        return absoluteEncoder.getAbsolutePosition().getValueAsDouble() - offset.getDegrees();
-    }
+        double angle = absoluteEncoder.getAbsolutePosition().getValueAsDouble() - offset.getDegrees();
 
-    public void resetAzimuthPosistion(){
-        azimuthEncoder.setPosition(getAbsoultePosistion());
+        if(constants.absoulteFlipped){return angle * -1;}
+
+        return angle;
     }
 
     public double getDrivePosistion(){
@@ -94,6 +116,14 @@ public class SwerveModule extends SubsystemBase{
 
     public double getAzimuthPosistion(){
         return azimuthEncoder.getPosition();
+    }
+
+    public CANcoder getCANCoder(){
+        return absoluteEncoder;
+    }
+
+    public void resetAzimuthPosistion(){
+        azimuthEncoder.setPosition(getAbsoultePosistion());
     }
 
     public void setAzimuthPIDController(double p, double i, double d){
@@ -114,17 +144,22 @@ public class SwerveModule extends SubsystemBase{
         state = SwerveModuleState.optimize(state, getModuleState().angle);
 
         driveMotor.set(state.speedMetersPerSecond / SwerveConstants.maxLinearSpeed);
-        azimuthMotor.set(angleController.calculate(getAzimuthPosistion(), state.angle.getRadians()));
+        setAzimuthPosistion(state.angle);
 
+    }
+
+    public void setAzimuthPosistion(Rotation2d demand){
+        // The controller takes in the demand as a rotation
+        angleController.setReference(demand.getRotations(), ControlType.kPosition, 0);
+    }
+
+    public void setDriveVoltage(double demand){
+        driveMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
     }
 
     public void stop(){
         driveMotor.set(0);
         azimuthMotor.set(0);
-    }
-
-    public CANcoder getCANCoder(){
-        return absoluteEncoder;
     }
 
     public SwerveModuleState getModuleState(){

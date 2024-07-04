@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.Swerve;
@@ -41,7 +42,13 @@ public class RobotContainer {
   }
 
 
-  private void configureBindings() {}
+  private void configureBindings() {
+    // Find the minimum voltage needed to move robot // 
+    pilot.a().onTrue(new InstantCommand(() -> {swerve.moveDriveVolts(3);}))
+    .onFalse(new InstantCommand(() -> swerve.moveDriveVolts(0)));
+
+    pilot.x().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
