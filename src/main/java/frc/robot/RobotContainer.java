@@ -5,9 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.TeleopDrive;
-import frc.robot.subsystems.Swerve;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -16,29 +14,7 @@ import frc.robot.subsystems.Swerve;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private CommandXboxController pilot = new CommandXboxController(0);
-  private final Swerve swerve = new Swerve();
-
-  public RobotContainer() {
-    swerve.setDefaultCommand(
-      new TeleopDrive(
-        swerve, 
-        () -> applyDeadband(pilot.getLeftY()), 
-        () -> applyDeadband(pilot.getLeftX()), 
-        () -> applyDeadband(pilot.getRightX()), 
-        () -> pilot.y().getAsBoolean()));
-    configureBindings();
-  }
-
-  public double applyDeadband(double input){
-    if(Math.abs(input) < 0.2){
-      return 0;
-    }
-
-    else{
-      return input;
-    }
-  }
+  public RobotContainer() {}
 
 
   private void configureBindings() {}
