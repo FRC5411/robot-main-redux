@@ -92,7 +92,7 @@ public class Swerve extends SubsystemBase {
     final SwerveModuleState[] swerveModuleStates;
       if(fieldRelative){
         swerveModuleStates = kinematics.toSwerveModuleStates(
-          discretize(ChassisSpeeds.fromFieldRelativeSpeeds(
+          (ChassisSpeeds.fromFieldRelativeSpeeds(
             translation.getX(), 
             translation.getY(), 
             rotation, 
@@ -101,7 +101,7 @@ public class Swerve extends SubsystemBase {
 
       else{
         swerveModuleStates = kinematics.toSwerveModuleStates(
-          discretize(new ChassisSpeeds(
+          (new ChassisSpeeds(
             translation.getX(), 
             translation.getY(), 
             rotation)));
