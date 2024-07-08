@@ -26,6 +26,7 @@ public class ShooterConstants{
         public static final double kWheelGearRatio = 1.0/1.0;
 
         public static final PIDConstants flyWheelControllerConstants = new PIDConstants(0, 0, 0);
+        public static final FeedForwardConstants flywheelControlllerFFConstants = new FeedForwardConstants(0, 0, 0, 0);
 
     }
 

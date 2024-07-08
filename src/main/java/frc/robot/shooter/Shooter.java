@@ -39,6 +39,7 @@ public class Shooter extends SubsystemBase {
 
   private DutyCycleEncoder pivotEncoder;
   private ArmFeedforward pivotFF;
+  private SimpleMotorFeedforward flywheelFF;
 
   /** Creates a new Shooer. */
   public Shooter() {
@@ -67,6 +68,11 @@ public class Shooter extends SubsystemBase {
       ShooterConstants.pivotConstants.pivotControllerFFConstants.getV(), 
       ShooterConstants.pivotConstants.pivotControllerFFConstants.getG(), 
       ShooterConstants.pivotConstants.pivotControllerFFConstants.getA());
+    
+    flywheelFF = new SimpleMotorFeedforward(
+      ShooterConstants.flywheelConstants.flywheelControlllerFFConstants.getS(),
+      ShooterConstants.flywheelConstants.flywheelControlllerFFConstants.getV(), 
+      ShooterConstants.flywheelConstants.flywheelControlllerFFConstants.getG());
 
     config();
   }
@@ -137,6 +143,14 @@ public class Shooter extends SubsystemBase {
       ControlType.kPosition, 
       0, 
       pivotFF.calculate(0, 0));
+  }
+
+  public void setFlywheelVelocity(double demand){
+    topLeftController.setReference(
+      demand, 
+      ControlType.kVelocity, 
+      0, 
+      flywheelFF.calculate(0, 0));
   }
 
   @Override
