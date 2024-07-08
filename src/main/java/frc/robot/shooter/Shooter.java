@@ -5,11 +5,17 @@
 package frc.robot.shooter;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.MotorFeedbackSensor;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
@@ -20,6 +26,7 @@ public class Shooter extends SubsystemBase {
   private CANSparkMax bottomRightWheelMotor;
   private CANSparkMax bottomLeftWheelMotor;
 
+  private SparkPIDController pivotController;
   private SparkPIDController topRightController;
   private SparkPIDController topLeftController;
   private SparkPIDController bottomRightController;
@@ -30,6 +37,9 @@ public class Shooter extends SubsystemBase {
   private RelativeEncoder bottomRightEncoder;
   private RelativeEncoder bottomLeftEncoder;
 
+  private DutyCycleEncoder pivotEncoder;
+  private ArmFeedforward pivotFF;
+
   /** Creates a new Shooer. */
   public Shooter() {
     pivotMotor = new CANSparkMax(ShooterConstants.pivotConstants.kPivotPort, MotorType.kBrushless);
@@ -39,15 +49,25 @@ public class Shooter extends SubsystemBase {
     bottomRightWheelMotor = new CANSparkMax(ShooterConstants.pivotConstants.kPivotPort, MotorType.kBrushless);
     bottomLeftWheelMotor = new CANSparkMax(ShooterConstants.pivotConstants.kPivotPort, MotorType.kBrushless);
 
+    pivotController = pivotMotor.getPIDController();
+
     topRightController = topRightWheelMotor.getPIDController();
     topLeftController = topLeftWheelMotor.getPIDController();
     bottomRightController = bottomRightWheelMotor.getPIDController();
     bottomLeftController = bottomLeftWheelMotor.getPIDController();
 
+    pivotEncoder = new DutyCycleEncoder(ShooterConstants.pivotConstants.kAbsoulteEncoderPort);
     topRightEncoder = topRightWheelMotor.getEncoder();
     topLeftEncoder = topLeftWheelMotor.getEncoder();
     bottomRightEncoder = bottomRightWheelMotor.getEncoder();
     bottomLeftEncoder = bottomLeftWheelMotor.getEncoder();
+
+    pivotFF = new ArmFeedforward(
+      ShooterConstants.pivotConstants.pivotControllerFFConstants.getS(),
+      ShooterConstants.pivotConstants.pivotControllerFFConstants.getV(), 
+      ShooterConstants.pivotConstants.pivotControllerFFConstants.getG(), 
+      ShooterConstants.pivotConstants.pivotControllerFFConstants.getA());
+
     config();
   }
 
@@ -68,6 +88,7 @@ public class Shooter extends SubsystemBase {
     flywheelControllerConfig(bottomRightController, bottomRightWheelMotor, bottomRightEncoder);
     flywheelControllerConfig(topLeftController, topLeftWheelMotor, topLeftEncoder);
     flywheelControllerConfig(bottomLeftController, bottomLeftWheelMotor, bottomLeftEncoder);
+    pivotControllerConfig();
 
     bottomRightWheelMotor.follow(topRightWheelMotor);
     bottomLeftWheelMotor.follow(topLeftWheelMotor);
@@ -83,9 +104,9 @@ public class Shooter extends SubsystemBase {
   }
 
   private void flywheelControllerConfig(SparkPIDController controller, CANSparkMax motor, RelativeEncoder encoder){
-    controller.setP(ShooterConstants.flywheelConstants.flyWheelConstants.getP());
-    controller.setI(ShooterConstants.flywheelConstants.flyWheelConstants.getI());
-    controller.setD(ShooterConstants.flywheelConstants.flyWheelConstants.getD());
+    controller.setP(ShooterConstants.flywheelConstants.flyWheelControllerConstants.getP());
+    controller.setI(ShooterConstants.flywheelConstants.flyWheelControllerConstants.getI());
+    controller.setD(ShooterConstants.flywheelConstants.flyWheelControllerConstants.getD());
 
     controller.setPositionPIDWrappingMinInput(-0.5 * ShooterConstants.flywheelConstants.kWheelGearRatio);
     controller.setPositionPIDWrappingMaxInput(0.5 * ShooterConstants.flywheelConstants.kWheelGearRatio);
@@ -94,6 +115,24 @@ public class Shooter extends SubsystemBase {
     controller.setFeedbackDevice(encoder);
 
     motor.burnFlash();
+  }
+
+  private void pivotControllerConfig(){
+    pivotController.setP(ShooterConstants.pivotConstants.pivotControllerConstants.getP());
+    pivotController.setI(ShooterConstants.pivotConstants.pivotControllerConstants.getI());
+    pivotController.setD(ShooterConstants.pivotConstants.pivotControllerConstants.getD());
+
+    pivotController.setPositionPIDWrappingMinInput(-0.5 * ShooterConstants.pivotConstants.kPivotGearRatio);
+    pivotController.setPositionPIDWrappingMaxInput(0.5 * ShooterConstants.pivotConstants.kPivotGearRatio);
+    pivotController.setPositionPIDWrappingEnabled(true);
+
+    pivotController.setFeedbackDevice((MotorFeedbackSensor) pivotEncoder);
+
+    pivotMotor.burnFlash();
+  }
+
+  public void setPivotPosistion(Rotation2d demand){
+    pivotController.setReference(demand.getRotations(), ControlType.kPosition, 0, );
   }
 
   @Override
