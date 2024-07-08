@@ -132,7 +132,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setPivotPosistion(Rotation2d demand){
-    pivotController.setReference(demand.getRotations(), ControlType.kPosition, 0, );
+    pivotController.setReference(
+      demand.getRotations(), 
+      ControlType.kPosition, 
+      0, 
+      pivotFF.calculate(0, 0));
   }
 
   @Override
