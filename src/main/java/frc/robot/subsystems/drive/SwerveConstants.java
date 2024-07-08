@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
 public class SwerveConstants{
-  // TODO: Find out these measurements from zesty CAD team
     public static final double trackWidth = Units.inchesToMeters(27);
     public static final double wheelBase = Units.inchesToMeters(27);
     public static final double wheelDiameter = Units.inchesToMeters(3.95); // 3.8897
@@ -18,7 +17,6 @@ public class SwerveConstants{
 
     public static final int pigeonID = 10;
     
-    //TODO: Find Gear Ratios
     public static final double driveGearRatio = 6.75 / 1.0; // L2 Ratio
     public static final double angleGearRatio = 150.0 / 7.0;
 

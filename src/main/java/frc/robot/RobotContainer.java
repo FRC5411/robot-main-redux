@@ -32,17 +32,6 @@ public class RobotContainer {
     configureBindings();
   }
 
-  public double applyDeadband(double input){
-    if(Math.abs(input) < 0.2){
-      return 0;
-    }
-
-    else{
-      return input;
-    }
-  }
-
-
   private void configureBindings() {
     // Find the minimum voltage needed to move robot // 
     pilot.a().onTrue(new InstantCommand(() -> {swerve.moveDriveVolts(3);}))
