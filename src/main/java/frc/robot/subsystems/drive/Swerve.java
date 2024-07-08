@@ -72,7 +72,9 @@ public class Swerve extends SubsystemBase {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
 
     for(int i = 0; i < 4; i++){
-      states[i] = new SwerveModulePosition(modules[i].getDistance(), new Rotation2d(modules[i].getAzimuthPosistion()));
+      states[i] = new SwerveModulePosition(
+        modules[i].getDistance(), 
+        new Rotation2d(modules[i].getAzimuthPosistion()));
     }
 
     return states;

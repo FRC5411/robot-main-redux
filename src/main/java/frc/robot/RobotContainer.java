@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,10 +25,10 @@ public class RobotContainer {
     swerve.setDefaultCommand(
       new TeleopDrive(
         swerve, 
-        () -> applyDeadband(pilot.getLeftY()), 
-        () -> applyDeadband(pilot.getLeftX()), 
-        () -> applyDeadband(pilot.getRightX()), 
-        () -> pilot.y().getAsBoolean()));
+        () -> MathUtil.applyDeadband(pilot.getLeftY(), 0.2, 1.0), 
+        () -> MathUtil.applyDeadband(pilot.getLeftX(), 0.2, 1.0), 
+        () -> MathUtil.applyDeadband(pilot.getRightX(), 0.2, 1.0), 
+        () -> true));
     configureBindings();
   }
 
