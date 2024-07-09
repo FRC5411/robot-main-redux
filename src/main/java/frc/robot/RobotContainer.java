@@ -26,7 +26,7 @@ public class RobotContainer {
         swerve, 
         () -> applyDeadband(pilot.getLeftY()), 
         () -> applyDeadband(pilot.getLeftX()), 
-        () -> 0, 
+        () -> applyDeadband(pilot.getRightX()), 
         () -> true));
     configureBindings();
   }

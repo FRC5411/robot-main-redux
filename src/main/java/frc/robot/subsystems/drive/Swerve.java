@@ -16,6 +16,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -153,9 +154,17 @@ public class Swerve extends SubsystemBase {
       () -> {setAzimuthP(kAzimuthP.get());}, 
       kAzimuthP);
 
-    SmartDashboard.putNumber("FRONT RIGHT ABSOULTE POS", FL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("FRONT RIGHT ABSOULTE POS", FR.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("FRONT RIGHT RELATIVE POS", FR.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("FRONT RIGHT RELATIVE POS", FL.getAzimuthPosistion());
+    SmartDashboard.putNumber("FRONT LEFT ABSOULTE POS", FL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("FRONT LEFT RELATIVE POS", FL.getAzimuthPosistion());
+
+    SmartDashboard.putNumber("BACK RIGHT ABSOULTE POS", BR.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("BACK RIGHT RELATIVE POS", BR.getAzimuthPosistion());
+
+    SmartDashboard.putNumber("BACK LEFT ABSOULTE POS", BL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("BACAK LEFT RELATIVE POS", BL.getAzimuthPosistion());
   }
 
 

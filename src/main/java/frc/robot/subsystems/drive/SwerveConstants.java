@@ -25,20 +25,17 @@ public class SwerveConstants{
     public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
     public static final double angleConversionFactor = 360.0 / angleGearRatio;
 
-    // TODO: Find accurate max linear speed as this is a rough estimate
-    //Linear Speed (meters /sec) = motor speed (RPM) / gear ratio * pi * wheel diameter (meters) / 60
     public static final double maxLinearSpeed  = 4.60248;
     public static final double maxRotationalVelocity = maxLinearSpeed / robotRadius;
 
-    public static final int driftRate = 1;
 
-    public static double kp = 0.001;
+    public static double kp = 1.0;
 
     public final class FLModule{
       public static final int driveMotorID = 11;
       public static final int angleMotorID = 15;
       public static final int canCoderID = 2;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.107666);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.499);
       public static final ModuleConstants constants =
           new ModuleConstants(
             angleMotorID, 
@@ -54,7 +51,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 16;
       public static final int canCoderID = 3;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.322754);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.32);
       public static final ModuleConstants constants =
           new ModuleConstants(
             angleMotorID, 
@@ -70,7 +67,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 13;
       public static final int angleMotorID = 17;
       public static final int canCoderID = 4;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.164307);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.165);
       public static final ModuleConstants constants =
           new ModuleConstants(
             angleMotorID, 
@@ -86,7 +83,7 @@ public class SwerveConstants{
       public static final int driveMotorID = 14;
       public static final int angleMotorID = 18;
       public static final int canCoderID = 5;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.169678);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.171);
       public static final ModuleConstants constants =
           new ModuleConstants(
             angleMotorID, 

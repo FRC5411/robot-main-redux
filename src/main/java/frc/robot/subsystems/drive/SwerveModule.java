@@ -94,7 +94,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public Rotation2d getAbsoultePosistion(){
-        Rotation2d angle =  Rotation2d.fromRotations(absoluteEncoder.getAbsolutePosition().getValueAsDouble()).minus(offset);
+        Rotation2d angle = Rotation2d.fromRotations(-absoluteEncoder.getAbsolutePosition().getValueAsDouble()).plus(offset);
         return angle;
     }
 
@@ -142,7 +142,7 @@ public class SwerveModule extends SubsystemBase{
 
     public void setAzimuthPosistion(Rotation2d demand){
         // The controller takes in the demand as a rotation
-        angleController.setReference(demand.getRotations() * SwerveConstants.angleGearRatio, ControlType.kPosition, 0);
+        angleController.setReference(demand.getRotations(), ControlType.kPosition, 0);
     }
 
     public void setDriveVoltage(double demand){
