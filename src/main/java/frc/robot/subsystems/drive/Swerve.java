@@ -33,7 +33,7 @@ public class Swerve extends SubsystemBase {
   private final SwerveModule[] modules;
   private final Field2d field2d;
 
-  private static LoggedTunableNumber kDriftRate;
+  private static LoggedTunableNumber kAzimuthP;
 
 
 
@@ -61,7 +61,7 @@ public class Swerve extends SubsystemBase {
 
     SmartDashboard.putData(field2d);
 
-    kDriftRate = new LoggedTunableNumber("Drift Rate", SwerveConstants.driftRate);
+    kAzimuthP = new LoggedTunableNumber("Azimuth P", SwerveConstants.kp);
   }
 
   public Rotation2d getYaw(){
@@ -116,24 +116,9 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  public void pidTune(){
-    FR.setAzimuthPosistion(new Rotation2d().fromRotations(0.25));
-  }
-
   public void Zero(){
     FR.stop();
   }
-
-  private ChassisSpeeds discretize(ChassisSpeeds speeds) {
-    double dt = 0.02;
-    var desiredDeltaPose = new Pose2d(
-        speeds.vxMetersPerSecond * dt,
-        speeds.vyMetersPerSecond * dt,
-        new Rotation2d(speeds.omegaRadiansPerSecond * dt * kDriftRate.get()));
-    var twist = new Pose2d().log(desiredDeltaPose);
-
-    return new ChassisSpeeds((twist.dx / dt), (twist.dy / dt), (speeds.omegaRadiansPerSecond));
-}
 
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -153,6 +138,10 @@ public class Swerve extends SubsystemBase {
     odometry.resetPosition(getYaw(), getSwerveModulePositions(), pose);
   }
 
+  public void setAzimuthP(double val){
+    SwerveConstants.kp = val;
+  }
+
   @Override
   public void periodic() {
     odometry.update(getYaw(), getSwerveModulePositions());
@@ -161,10 +150,10 @@ public class Swerve extends SubsystemBase {
 
     LoggedTunableNumber.ifChanged(
       hashCode(), 
-      () -> {kDriftRate.get();}, 
-      kDriftRate);
+      () -> {setAzimuthP(kAzimuthP.get());}, 
+      kAzimuthP);
 
-    SmartDashboard.putNumber("FRONT RIGHT ABSOULTE POS", FL.getAbsoultePosistion());
+    SmartDashboard.putNumber("FRONT RIGHT ABSOULTE POS", FL.getAbsoultePosistion().getDegrees());
 
     SmartDashboard.putNumber("FRONT RIGHT RELATIVE POS", FL.getAzimuthPosistion());
   }

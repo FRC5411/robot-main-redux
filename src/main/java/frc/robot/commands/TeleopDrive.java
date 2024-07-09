@@ -41,7 +41,7 @@ public class TeleopDrive extends Command {
 
     drive.drive(
       new Translation2d(xVal, yVal).times(SwerveConstants.maxLinearSpeed), 
-      thetaVal * 40, 
+      thetaVal, 
       !field.getAsBoolean()
       );
   }

@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -47,9 +45,6 @@ public class RobotContainer {
     .onFalse(new InstantCommand(() -> swerve.moveDriveVolts(0)));
 
     pilot.x().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
-
-    pilot.b().onTrue(new InstantCommand(() -> {swerve.pidTune();})).
-    onFalse(new InstantCommand(() -> swerve.Zero()));
   }
 
   /**

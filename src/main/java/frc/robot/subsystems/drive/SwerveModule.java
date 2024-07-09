@@ -16,7 +16,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.LoggedTunableNumber;
 
 /** Add your docs here. */
 public class SwerveModule extends SubsystemBase{
@@ -31,9 +30,6 @@ public class SwerveModule extends SubsystemBase{
     private Rotation2d offset;
 
     private final SparkPIDController angleController;
-
-    public static LoggedTunableNumber kAzimuthP;
-    public static LoggedTunableNumber kAzimuthD;
 
     public ModuleConstants constants;
 
@@ -53,9 +49,6 @@ public class SwerveModule extends SubsystemBase{
         angleController = azimuthMotor.getPIDController();
         configAngleController();
 
-        kAzimuthP = new LoggedTunableNumber("Module " + idName + " Azimuth P", angleController.getP());
-        kAzimuthD = new LoggedTunableNumber("Module " + idName + " Azimuth D", angleController.getD());
-
         config();
 
     }
@@ -66,6 +59,7 @@ public class SwerveModule extends SubsystemBase{
         azimuthMotor.setIdleMode(IdleMode.kCoast);
         azimuthMotor.enableVoltageCompensation(12);
         azimuthEncoder.setPositionConversionFactor(SwerveConstants.angleConversionFactor);
+        azimuthEncoder.setMeasurementPeriod(20);
 
         driveMotor.restoreFactoryDefaults();
         driveMotor.setSmartCurrentLimit(60);
@@ -73,6 +67,8 @@ public class SwerveModule extends SubsystemBase{
         driveMotor.enableVoltageCompensation(12);
         driveEncoder.setPositionConversionFactor(SwerveConstants.driveConversionPositionFactor);
         driveEncoder.setVelocityConversionFactor(SwerveConstants.driveConversionVelocityFactor);
+        driveEncoder.setPosition(0.0);
+        driveEncoder.setMeasurementPeriod(20);
 
         absoluteEncoder.clearStickyFaults();
 
@@ -97,11 +93,8 @@ public class SwerveModule extends SubsystemBase{
         azimuthMotor.burnFlash();
     }
 
-    public double getAbsoultePosistion(){
-        double angle = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
-
-        if(constants.absoulteFlipped){return angle * -1;}
-
+    public Rotation2d getAbsoultePosistion(){
+        Rotation2d angle =  Rotation2d.fromRotations(absoluteEncoder.getAbsolutePosition().getValueAsDouble()).minus(offset);
         return angle;
     }
 
@@ -122,7 +115,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void resetAzimuthPosistion(){
-        azimuthEncoder.setPosition(getAbsoultePosistion());
+        azimuthEncoder.setPosition(getAbsoultePosistion().getDegrees());
     }
 
     public void setAzimuthPIDController(double p, double i, double d){
@@ -170,10 +163,5 @@ public class SwerveModule extends SubsystemBase{
         return driveEncoder.getPosition() / driveEncoder.getCountsPerRevolution() * (Math.PI * SwerveConstants.wheelDiameter);
     }
 
-    public void periodic(){
-        LoggedTunableNumber.ifChanged(
-            hashCode(), 
-            () -> {setAzimuthPIDController(kAzimuthP.get(), (0), kAzimuthD.get());}, 
-            kAzimuthP, kAzimuthD);
-    }
+    public void periodic(){}
 }
