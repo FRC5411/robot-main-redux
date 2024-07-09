@@ -166,7 +166,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public SwerveModuleState getModuleState(){
-        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getAzimuthPosistion()));
+        return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAzimuthPosistion()));
     }
 
     public double getDistance(){
