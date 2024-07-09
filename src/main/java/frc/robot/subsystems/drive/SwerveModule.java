@@ -138,17 +138,22 @@ public class SwerveModule extends SubsystemBase{
 
         driveMotor.set(state.speedMetersPerSecond / SwerveConstants.maxLinearSpeed);
 
-        Rotation2d desiredAngle = state.angle;
+        setAzimuthPosistion(state);
+    }
+
+    public void setAzimuthPosistion(SwerveModuleState state){
+        Rotation2d desiredAngle;
         if (Math.abs(state.speedMetersPerSecond) <= (SwerveConstants.maxLinearSpeed * 0.001)) {
             desiredAngle = lastAngle;
         }
-        setAzimuthPosistion(desiredAngle);
-        lastAngle = desiredAngle;
-    }
+        else {
+            desiredAngle = state.angle;
+        }
 
-    public void setAzimuthPosistion(Rotation2d demand){
         // The controller takes in the demand as a rotation
-        angleController.setReference(demand.getDegrees(), ControlType.kPosition, 0);
+        angleController.setReference(desiredAngle.getDegrees(), ControlType.kPosition, 0);
+
+        lastAngle = desiredAngle;
     }
 
     public void setDriveVoltage(double demand){
