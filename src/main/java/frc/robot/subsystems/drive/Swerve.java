@@ -116,6 +116,14 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  public void pidTune(){
+    FR.setAzimuthPosistion(new Rotation2d().fromRotations(0.25));
+  }
+
+  public void Zero(){
+    FR.stop();
+  }
+
   private ChassisSpeeds discretize(ChassisSpeeds speeds) {
     double dt = 0.02;
     var desiredDeltaPose = new Pose2d(
@@ -149,14 +157,6 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     odometry.update(getYaw(), getSwerveModulePositions());
 
-    for (SwerveModule mod : modules) {
-      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Cancoder Posistion: ", mod.getCANCoder().getAbsolutePosition().getValueAsDouble());
-      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Azimuth Posistion: ", mod.getModuleState().angle.getDegrees());
-      SmartDashboard.putNumber("Swerve Module " + mod.idName + " Drive Velocity", mod.getModuleState().speedMetersPerSecond);
-    }
-
-    SmartDashboard.putNumber("Robot Yaw: ", getYaw().getDegrees());
-
     field2d.setRobotPose(getPose());
 
     LoggedTunableNumber.ifChanged(
@@ -164,6 +164,10 @@ public class Swerve extends SubsystemBase {
       () -> {kDriftRate.get();}, 
       kDriftRate);
 
+    SmartDashboard.putNumber("FRONT RIGHT ABSOULTE POS", FL.getAbsoultePosistion());
 
+    SmartDashboard.putNumber("FRONT RIGHT RELATIVE POS", FL.getAzimuthPosistion());
   }
+
+
 }

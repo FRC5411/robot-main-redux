@@ -13,6 +13,8 @@ public class SwerveConstants{
     public static final double wheelBase = Units.inchesToMeters(27);
     public static final double wheelDiameter = Units.inchesToMeters(3.95); // 3.8897
 
+    public static final double robotRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
+
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     public static final int pigeonID = 10;
@@ -26,18 +28,20 @@ public class SwerveConstants{
 
     // TODO: Find accurate max linear speed as this is a rough estimate
     //Linear Speed (meters /sec) = motor speed (RPM) / gear ratio * pi * wheel diameter (meters) / 60
-    public static final int maxLinearSpeed  = 5;
+    public static final double maxLinearSpeed  = 4.60248;
+    public static final double maxRotationalVelocity = maxLinearSpeed / robotRadius;
 
     public static final int driftRate = 1;
 
+    public static final double kp = 0.001;
 
     //TODO: ID all of the modules and find offsets
     public final class FLModule{
       public static final int driveMotorID = 11;
       public static final int angleMotorID = 15;
       public static final int canCoderID = 2;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(53.58);
-      public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.107666);
+      public static final PIDController angleController = new PIDController(0.0005, 0, 0);
       public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
           new ModuleConstants(
@@ -56,8 +60,8 @@ public class SwerveConstants{
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 16;
       public static final int canCoderID = 3;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-19.78);
-      public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.322754);
+      public static final PIDController angleController = new PIDController(0, 0, 0);
       public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
           new ModuleConstants(
@@ -76,8 +80,8 @@ public class SwerveConstants{
       public static final int driveMotorID = 13;
       public static final int angleMotorID = 17;
       public static final int canCoderID = 4;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-41.07);
-      public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(-0.164307);
+      public static final PIDController angleController = new PIDController(0.0005, 0, 0);
       public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
           new ModuleConstants(
@@ -96,8 +100,8 @@ public class SwerveConstants{
       public static final int driveMotorID = 14;
       public static final int angleMotorID = 18;
       public static final int canCoderID = 5;
-      public static final Rotation2d angleOffset = Rotation2d.fromRotations(90.93);
-      public static final PIDController angleController = new PIDController(0.01, 0, 0);
+      public static final Rotation2d angleOffset = Rotation2d.fromRotations(0.169678);
+      public static final PIDController angleController = new PIDController(0.0005, 0, 0);
       public static final PIDController driveController = new PIDController(0, 0, 0);
       public static final ModuleConstants constants =
           new ModuleConstants(

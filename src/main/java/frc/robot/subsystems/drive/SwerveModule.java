@@ -84,9 +84,9 @@ public class SwerveModule extends SubsystemBase{
     }
 
     private void configAngleController(){
-        angleController.setP(constants.angleController.getP());
-        angleController.setI(constants.angleController.getI());
-        angleController.setD(constants.angleController.getD());
+        angleController.setP(SwerveConstants.kp);
+        angleController.setI(0);
+        angleController.setD(0);
 
         angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
@@ -98,7 +98,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public double getAbsoultePosistion(){
-        double angle = absoluteEncoder.getAbsolutePosition().getValueAsDouble() - offset.getDegrees();
+        double angle = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
 
         if(constants.absoulteFlipped){return angle * -1;}
 
@@ -137,7 +137,7 @@ public class SwerveModule extends SubsystemBase{
         if(Math.abs(state.speedMetersPerSecond) < 0.001){
             stop();
             // return to make sure we exit the program // 
-            return;
+            return; 
         }
 
         state = SwerveModuleState.optimize(state, getModuleState().angle);
@@ -149,7 +149,7 @@ public class SwerveModule extends SubsystemBase{
 
     public void setAzimuthPosistion(Rotation2d demand){
         // The controller takes in the demand as a rotation
-        angleController.setReference(demand.getRotations(), ControlType.kPosition, 0);
+        angleController.setReference(demand.getRotations() * SwerveConstants.angleGearRatio, ControlType.kPosition, 0);
     }
 
     public void setDriveVoltage(double demand){

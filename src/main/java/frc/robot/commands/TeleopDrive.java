@@ -7,20 +7,16 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Swerve;
+import frc.robot.subsystems.drive.SwerveConstants;
 public class TeleopDrive extends Command {
   private Swerve drive;
   private DoubleSupplier x;
   private DoubleSupplier y;
   private DoubleSupplier theta;
   private BooleanSupplier field;
-
-  private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0);
-  private SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
-  private SlewRateLimiter thetaLimiter = new SlewRateLimiter(3.0);
 
   /** Creates a new TeleopDrive. */
   public TeleopDrive(Swerve drive, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, BooleanSupplier field) {
@@ -39,13 +35,13 @@ public class TeleopDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double xVal = xLimiter.calculate(x.getAsDouble());
-    double yVal = yLimiter.calculate(y.getAsDouble());
-    double thetaVal = thetaLimiter.calculate(theta.getAsDouble()); 
+    double xVal = x.getAsDouble();
+    double yVal = y.getAsDouble();
+    double thetaVal = theta.getAsDouble();
 
     drive.drive(
-      new Translation2d(xVal, yVal), 
-      thetaVal, 
+      new Translation2d(xVal, yVal).times(SwerveConstants.maxLinearSpeed), 
+      thetaVal * 40, 
       !field.getAsBoolean()
       );
   }

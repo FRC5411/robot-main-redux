@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -25,19 +26,30 @@ public class RobotContainer {
     swerve.setDefaultCommand(
       new TeleopDrive(
         swerve, 
-        () -> MathUtil.applyDeadband(pilot.getLeftY(), 0.2, 1.0), 
-        () -> MathUtil.applyDeadband(pilot.getLeftX(), 0.2, 1.0), 
-        () -> MathUtil.applyDeadband(pilot.getRightX(), 0.2, 1.0), 
+        () -> applyDeadband(pilot.getLeftY()), 
+        () -> applyDeadband(pilot.getLeftX()), 
+        () -> 0, 
         () -> true));
     configureBindings();
   }
 
+  private double applyDeadband(double demand){
+    if(-0.5 < demand && demand < 0.5){
+      return 0;
+    }
+
+    return demand;
+  }
+
   private void configureBindings() {
     // Find the minimum voltage needed to move robot // 
-    pilot.a().onTrue(new InstantCommand(() -> {swerve.moveDriveVolts(3);}))
+    pilot.a().onTrue(new InstantCommand(() -> {swerve.moveDriveVolts(2);}))
     .onFalse(new InstantCommand(() -> swerve.moveDriveVolts(0)));
 
     pilot.x().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
+
+    pilot.b().onTrue(new InstantCommand(() -> {swerve.pidTune();})).
+    onFalse(new InstantCommand(() -> swerve.Zero()));
   }
 
   /**
