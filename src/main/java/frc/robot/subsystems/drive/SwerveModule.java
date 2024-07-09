@@ -48,7 +48,6 @@ public class SwerveModule extends SubsystemBase{
 
         // TODO: Tune angle controller
         angleController = azimuthMotor.getPIDController();
-        // configAngleController();
 
         config();
         lastAngle = Rotation2d.fromDegrees(azimuthEncoder.getPosition());
@@ -76,10 +75,6 @@ public class SwerveModule extends SubsystemBase{
         angleController.setP(SwerveConstants.kp);
         angleController.setI(0);
         angleController.setD(0);
-
-        // angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
-        // angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
-        // angleController.setPositionPIDWrappingEnabled(true);
 
         angleController.setFeedbackDevice(azimuthEncoder);
 
@@ -123,13 +118,6 @@ public class SwerveModule extends SubsystemBase{
 
 
     public void setModuleState(SwerveModuleState state){
-        // // Will stop any jittering from occuring in the swerve wheels // 
-        // if(Math.abs(state.speedMetersPerSecond) < 0.001){
-        //     stop();
-        //     // return to make sure we exit the program // 
-        //     return; 
-        // }
-
         state = SwerveModuleState.optimize(state, getModuleState().angle);
 
         driveMotor.set(state.speedMetersPerSecond / SwerveConstants.maxLinearSpeed);
