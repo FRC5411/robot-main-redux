@@ -33,6 +33,7 @@ public class SwerveModule extends SubsystemBase{
 
     public ModuleConstants constants;
 
+    private Rotation2d lastAngle;
 
     public SwerveModule(String idName, ModuleConstants constants){
         this.idName = idName;
@@ -50,7 +51,7 @@ public class SwerveModule extends SubsystemBase{
         configAngleController();
 
         config();
-
+        lastAngle = Rotation2d.fromDegrees(azimuthEncoder.getPosition());
     }
 
     private void config(){
@@ -84,9 +85,9 @@ public class SwerveModule extends SubsystemBase{
         angleController.setI(0);
         angleController.setD(0);
 
-        angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
-        angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
-        angleController.setPositionPIDWrappingEnabled(true);
+        // angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
+        // angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
+        // angleController.setPositionPIDWrappingEnabled(true);
 
         angleController.setFeedbackDevice(azimuthEncoder);
 
@@ -126,23 +127,28 @@ public class SwerveModule extends SubsystemBase{
 
 
     public void setModuleState(SwerveModuleState state){
-        // Will stop any jittering from occuring in the swerve wheels // 
-        if(Math.abs(state.speedMetersPerSecond) < 0.001){
-            stop();
-            // return to make sure we exit the program // 
-            return; 
-        }
+        // // Will stop any jittering from occuring in the swerve wheels // 
+        // if(Math.abs(state.speedMetersPerSecond) < 0.001){
+        //     stop();
+        //     // return to make sure we exit the program // 
+        //     return; 
+        // }
 
         state = SwerveModuleState.optimize(state, getModuleState().angle);
 
         driveMotor.set(state.speedMetersPerSecond / SwerveConstants.maxLinearSpeed);
-        setAzimuthPosistion(state.angle);
 
+        Rotation2d desiredAngle = state.angle;
+        if (Math.abs(state.speedMetersPerSecond) <= (SwerveConstants.maxLinearSpeed * 0.001)) {
+            desiredAngle = lastAngle;
+        }
+        setAzimuthPosistion(desiredAngle);
+        lastAngle = desiredAngle;
     }
 
     public void setAzimuthPosistion(Rotation2d demand){
         // The controller takes in the demand as a rotation
-        angleController.setReference(demand.getRotations(), ControlType.kPosition, 0);
+        angleController.setReference(demand.getDegrees(), ControlType.kPosition, 0);
     }
 
     public void setDriveVoltage(double demand){
