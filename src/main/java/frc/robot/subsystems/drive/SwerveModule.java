@@ -48,7 +48,7 @@ public class SwerveModule extends SubsystemBase{
 
         // TODO: Tune angle controller
         angleController = azimuthMotor.getPIDController();
-        configAngleController();
+        // configAngleController();
 
         config();
         lastAngle = Rotation2d.fromDegrees(azimuthEncoder.getPosition());
@@ -73,14 +73,6 @@ public class SwerveModule extends SubsystemBase{
 
         absoluteEncoder.clearStickyFaults();
 
-        azimuthMotor.burnFlash();
-        driveMotor.burnFlash();
-
-        resetAzimuthPosistion();
-
-    }
-
-    private void configAngleController(){
         angleController.setP(SwerveConstants.kp);
         angleController.setI(0);
         angleController.setD(0);
@@ -92,6 +84,10 @@ public class SwerveModule extends SubsystemBase{
         angleController.setFeedbackDevice(azimuthEncoder);
 
         azimuthMotor.burnFlash();
+        driveMotor.burnFlash();
+
+        resetAzimuthPosistion();
+
     }
 
     public Rotation2d getAbsoultePosistion(){
