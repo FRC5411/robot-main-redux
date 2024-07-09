@@ -29,7 +29,7 @@ public class SwerveConstants{
     public static final double maxRotationalVelocity = maxLinearSpeed / robotRadius;
 
 
-    public static double kp = 1.0;
+    public static double kp = 0.01;
 
     public final class FLModule{
       public static final int driveMotorID = 11;
