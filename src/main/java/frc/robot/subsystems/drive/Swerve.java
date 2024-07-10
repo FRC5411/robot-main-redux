@@ -147,17 +147,21 @@ public class Swerve extends SubsystemBase {
       () -> {setAzimuthP(kAzimuthP.get());}, 
       kAzimuthP);
 
-    SmartDashboard.putNumber("FRONT RIGHT ABSOULTE POS", FR.getAbsoultePosistion().getDegrees());
-    SmartDashboard.putNumber("FRONT RIGHT RELATIVE POS", FR.getAzimuthPosistion());
+    SmartDashboard.putNumber("Module / FR / ABSOULTE POS", FR.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / FR / RELATIVE POS", FR.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("FRONT LEFT ABSOULTE POS", FL.getAbsoultePosistion().getDegrees());
-    SmartDashboard.putNumber("FRONT LEFT RELATIVE POS", FL.getAzimuthPosistion());
+    SmartDashboard.putNumber("Module / FL / ABSOULTE POS", FL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / FL / RELATIVE POS", FL.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("BACK RIGHT ABSOULTE POS", BR.getAbsoultePosistion().getDegrees());
-    SmartDashboard.putNumber("BACK RIGHT RELATIVE POS", BR.getAzimuthPosistion());
+    SmartDashboard.putNumber("Module / BR / ABSOULTE POS", BR.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / BR / RELATIVE POS", BR.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("BACK LEFT ABSOULTE POS", BL.getAbsoultePosistion().getDegrees());
-    SmartDashboard.putNumber("BACAK LEFT RELATIVE POS", BL.getAzimuthPosistion());
+    SmartDashboard.putNumber("Module / BL / ABSOULTE POS", BL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / BL / RELATIVE POS", BL.getAzimuthPosistion());
+
+    SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
+
+    SmartDashboard.putNumber("Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
   }
 
 
