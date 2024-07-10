@@ -29,7 +29,7 @@ public class SwerveConstants{
     public static final double maxRotationalVelocity = maxLinearSpeed / robotRadius;
 
 
-    public static double kp = 0.01;
+    public static double angleP = 0.01;
 
     public final class FLModule{
       public static final int driveMotorID = 11;
@@ -42,9 +42,9 @@ public class SwerveConstants{
             driveMotorID, 
             canCoderID, 
             angleOffset.getDegrees(), 
-            false,
             false, 
-            false);
+            false, 
+            true);
     }
 
     public final class FRModule{
@@ -60,7 +60,7 @@ public class SwerveConstants{
             angleOffset.getDegrees(), 
             false,
             false, 
-            false);
+            true);
     }
 
     public final class BLModule{
@@ -76,7 +76,7 @@ public class SwerveConstants{
             angleOffset.getDegrees(), 
             false,
             false, 
-            false);
+            true);
     }
 
     public final class BRModule{
@@ -92,7 +92,7 @@ public class SwerveConstants{
             angleOffset.getDegrees(), 
             false,
             false, 
-            false);
+            true);
     }
     
 }   

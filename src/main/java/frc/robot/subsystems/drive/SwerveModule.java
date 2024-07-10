@@ -25,6 +25,11 @@ public class SwerveModule extends SubsystemBase{
 
     private RelativeEncoder driveEncoder;
     private RelativeEncoder azimuthEncoder;
+
+    private boolean driveFlipped;
+    private boolean azimuthFlipped;
+    private boolean absoluteFlipped;
+
     private CANcoder absoluteEncoder;
 
     private Rotation2d offset;
@@ -37,7 +42,6 @@ public class SwerveModule extends SubsystemBase{
 
     public SwerveModule(String idName, ModuleConstants constants){
         this.idName = idName;
-        this.constants = constants;
 
         azimuthMotor = new CANSparkMax(constants.azimuthID, MotorType.kBrushless);
         driveMotor = new CANSparkMax(constants.driveID, MotorType.kBrushless);
@@ -45,8 +49,10 @@ public class SwerveModule extends SubsystemBase{
         azimuthEncoder = azimuthMotor.getEncoder();
         absoluteEncoder = new CANcoder(constants.encoderID);
         offset = new Rotation2d(constants.offset);
+        driveFlipped = constants.driveFlipped;
+        azimuthFlipped = constants.azimuthFlipped;
+        absoluteFlipped = constants.absoluteFlipped;
 
-        // TODO: Tune angle controller
         angleController = azimuthMotor.getPIDController();
 
         config();
@@ -58,6 +64,7 @@ public class SwerveModule extends SubsystemBase{
         azimuthMotor.setSmartCurrentLimit(30);
         azimuthMotor.setIdleMode(IdleMode.kCoast);
         azimuthMotor.enableVoltageCompensation(12);
+        azimuthMotor.setInverted(azimuthFlipped);
         azimuthEncoder.setPositionConversionFactor(SwerveConstants.angleConversionFactor);
         azimuthEncoder.setMeasurementPeriod(20);
 
@@ -65,6 +72,7 @@ public class SwerveModule extends SubsystemBase{
         driveMotor.setSmartCurrentLimit(60);
         driveMotor.setIdleMode(IdleMode.kBrake);
         driveMotor.enableVoltageCompensation(12);
+        driveMotor.setInverted(driveFlipped);
         driveEncoder.setPositionConversionFactor(SwerveConstants.driveConversionPositionFactor);
         driveEncoder.setVelocityConversionFactor(SwerveConstants.driveConversionVelocityFactor);
         driveEncoder.setPosition(0.0);
@@ -72,7 +80,7 @@ public class SwerveModule extends SubsystemBase{
 
         absoluteEncoder.clearStickyFaults();
 
-        angleController.setP(SwerveConstants.kp);
+        angleController.setP(SwerveConstants.angleP);
         angleController.setI(0);
         angleController.setD(0);
 
@@ -86,7 +94,11 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public Rotation2d getAbsoultePosistion(){
-        Rotation2d angle = Rotation2d.fromRotations(-absoluteEncoder.getAbsolutePosition().getValueAsDouble()).plus(offset);
+        double val = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
+
+        val = absoluteFlipped == true ? val * -1 : val;
+
+        Rotation2d angle = Rotation2d.fromRotations(val).plus(offset);
         return angle;
     }
 
