@@ -10,6 +10,7 @@ public class ShooterConstants{
     public class pivotConstants{
         public static final int kPivotPort = 0;
         public static final double kPivotGearRatio = 1.0/1.0;
+        public static final double kPivotPosistionConversionFactor = 1.0/1.0;
 
         public static final int kAbsoulteEncoderPort = 0;
 
@@ -30,7 +31,7 @@ public class ShooterConstants{
 
     }
 
-    public static final ShooterPosistion subwooferPosistion = new ShooterPosistion(new Rotation2d(0), 0);
+    public static final ShooterPosistion subwooferPosistion = new ShooterPosistion(Rotation2d.fromDegrees(1), 0);
 
     
 }
