@@ -11,7 +11,7 @@ public class ModuleConstants {
     public final double offset;
     public final boolean azimuthFlipped;
     public final boolean driveFlipped;
-    public final boolean absoulteFlipped;
+    public final boolean absoluteFlipped;
 
     public ModuleConstants(
         int azimuthID, 
@@ -28,6 +28,6 @@ public class ModuleConstants {
         this.offset = offset;
         this.azimuthFlipped = azimuthFlipped;
         this.driveFlipped = driveFlipped;
-        this.absoulteFlipped = absoluteFlipped;
+        this.absoluteFlipped = absoluteFlipped;
     }
 }
