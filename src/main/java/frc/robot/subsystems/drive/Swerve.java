@@ -16,7 +16,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTunableNumber;
 
@@ -35,8 +34,6 @@ public class Swerve extends SubsystemBase {
   private final Field2d field2d;
 
   private static LoggedTunableNumber kAzimuthP;
-
-
 
   public Swerve() {
     gyro = new Pigeon2(SwerveConstants.pigeonID);
@@ -62,7 +59,7 @@ public class Swerve extends SubsystemBase {
 
     SmartDashboard.putData(field2d);
 
-    kAzimuthP = new LoggedTunableNumber("Azimuth P", SwerveConstants.kp);
+    kAzimuthP = new LoggedTunableNumber("Azimuth P", SwerveConstants.angleP);
   }
 
   public Rotation2d getYaw(){
@@ -117,10 +114,6 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  public void Zero(){
-    FR.stop();
-  }
-
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
 
@@ -140,7 +133,7 @@ public class Swerve extends SubsystemBase {
   }
 
   public void setAzimuthP(double val){
-    SwerveConstants.kp = val;
+    SwerveConstants.angleP = val;
   }
 
   @Override
