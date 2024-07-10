@@ -147,16 +147,16 @@ public class Swerve extends SubsystemBase {
       () -> {setAzimuthP(kAzimuthP.get());}, 
       kAzimuthP);
 
-    SmartDashboard.putNumber("Module / FR / ABSOULTE POS", FR.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / FR / ABSOULTE POS", FR.getAbsolutePosistion().getDegrees());
     SmartDashboard.putNumber("Module / FR / RELATIVE POS", FR.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("Module / FL / ABSOULTE POS", FL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / FL / ABSOULTE POS", FL.getAbsolutePosistion().getDegrees());
     SmartDashboard.putNumber("Module / FL / RELATIVE POS", FL.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("Module / BR / ABSOULTE POS", BR.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / BR / ABSOULTE POS", BR.getAbsolutePosistion().getDegrees());
     SmartDashboard.putNumber("Module / BR / RELATIVE POS", BR.getAzimuthPosistion());
 
-    SmartDashboard.putNumber("Module / BL / ABSOULTE POS", BL.getAbsoultePosistion().getDegrees());
+    SmartDashboard.putNumber("Module / BL / ABSOULTE POS", BL.getAbsolutePosistion().getDegrees());
     SmartDashboard.putNumber("Module / BL / RELATIVE POS", BL.getAzimuthPosistion());
 
     SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
