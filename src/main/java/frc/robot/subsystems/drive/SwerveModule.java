@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -78,14 +79,9 @@ public class SwerveModule extends SubsystemBase{
         driveMotor.setIdleMode(IdleMode.kBrake);
         driveMotor.enableVoltageCompensation(12);
         driveMotor.setInverted(driveFlipped);
-        // driveEncoder.setPositionConversionFactor(SwerveConstants.driveConversionPositionFactor);
-        // driveEncoder.setVelocityConversionFactor(SwerveConstants.driveConversionVelocityFactor);
         driveEncoder.setPosition(0.0);
         driveEncoder.setMeasurementPeriod(20);
-        
-        // absoluteEncoder.getConfigurator().apply(new CANcoderConfiguration());
-
-        // var config = new CANcoderConfiguration();
+    
         var tat = new MagnetSensorConfigs();
         tat.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
         absoluteEncoder.getConfigurator().apply(tat);
@@ -95,8 +91,7 @@ public class SwerveModule extends SubsystemBase{
         angleController.setD(0);
         angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingMaxInput(-0.5 * SwerveConstants.angleGearRatio);
-        angleController.setPositionPIDWrappingEnabled(true)
-        ;
+        angleController.setPositionPIDWrappingEnabled(true);
 
         angleController.setFeedbackDevice(azimuthEncoder);
 
