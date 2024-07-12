@@ -4,13 +4,9 @@
 
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.CANcoderConfigurator;
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
-import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -38,10 +34,11 @@ public class SwerveModule extends SubsystemBase{
     private boolean absoluteFlipped;
 
     private CANcoder absoluteEncoder;
+    private StatusSignal<Double> absolutePositionSignal;
 
     private Rotation2d offset;
 
-    private final SparkPIDController angleController;
+    private SparkPIDController angleController;
 
     public ModuleConstants constants;
 
@@ -53,66 +50,66 @@ public class SwerveModule extends SubsystemBase{
         this.idName = idName;
         this.num = num;
 
-        azimuthMotor = new CANSparkMax(constants.azimuthID(), MotorType.kBrushless);
-        azimuthFlipped = constants.azimuthFlipped();
-        azimuthEncoder = azimuthMotor.getEncoder();
-        configureAzimuth();
-
-        angleController = azimuthMotor.getPIDController();
-        configueAngleController();
-
         driveMotor = new CANSparkMax(constants.driveID(), MotorType.kBrushless);
-        driveFlipped = constants.driveFlipped();
-        driveEncoder = driveMotor.getEncoder();
         configureDrive();
 
         absoluteEncoder = new CANcoder(constants.encoderID());
-        absoluteFlipped = constants.absoluteFlipped();
-        configureCANcoder();
+        configueCANcoder();
 
-        offset = new Rotation2d(constants.offset());
+        azimuthMotor = new CANSparkMax(constants.azimuthID(), MotorType.kBrushless);
+        configureAzimuth();
 
-        lastAngle = Rotation2d.fromDegrees(azimuthEncoder.getPosition());
+        offset = Rotation2d.fromRotations(constants.offset());
 
-        resetAzimuthPosistion();
-    }
-
-    private void configureAzimuth(){
-        azimuthMotor.restoreFactoryDefaults();
-        azimuthMotor.setSmartCurrentLimit(30);
-        azimuthMotor.setIdleMode(IdleMode.kCoast);
-        azimuthMotor.enableVoltageCompensation(12);
-        azimuthMotor.setInverted(azimuthFlipped);
-        azimuthEncoder.setMeasurementPeriod(20);
-        azimuthMotor.burnFlash();
     }
 
     private void configureDrive(){
         driveMotor.restoreFactoryDefaults();
-        driveMotor.setSmartCurrentLimit(60);
-        driveMotor.setIdleMode(IdleMode.kBrake);
-        driveMotor.enableVoltageCompensation(12);
+        driveMotor.setCANTimeout(250);
         driveMotor.setInverted(driveFlipped);
+        driveMotor.setSmartCurrentLimit(60);
+        driveMotor.enableVoltageCompensation(12.0);
+        driveMotor.setIdleMode(IdleMode.kBrake);
+
+        driveEncoder = driveMotor.getEncoder();
         driveEncoder.setPosition(0.0);
-        driveEncoder.setMeasurementPeriod(20);  
+        driveEncoder.setMeasurementPeriod(20);
+        driveEncoder.setAverageDepth(4);
+        driveMotor.setCANTimeout(10);
         driveMotor.burnFlash();
     }
 
-    private void configureCANcoder(){
-        var tat = new MagnetSensorConfigs();
-        tat.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
-        absoluteEncoder.getConfigurator().apply(tat);
-    }
+    private void configureAzimuth(){
+        azimuthMotor.restoreFactoryDefaults();
+        azimuthMotor.setCANTimeout(250);
+        azimuthMotor.setInverted(azimuthFlipped);
+        azimuthMotor.setSmartCurrentLimit(30);
+        azimuthMotor.enableVoltageCompensation(12.0);
+        azimuthMotor.setIdleMode(IdleMode.kCoast);
 
-    private void configueAngleController(){
-        angleController.setP(SwerveConstants.angleP);
-        angleController.setI(0);
-        angleController.setD(0);
+        azimuthEncoder = azimuthMotor.getEncoder();
+        resetAzimuthPosistion();
+        azimuthEncoder.setMeasurementPeriod(20);
+        azimuthEncoder.setAverageDepth(2);
+
+
+        angleController = azimuthMotor.getPIDController();
+        setAzimuthPIDController(
+            SwerveConstants.angleP,
+            0,
+            0);
+        angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
-        angleController.setPositionPIDWrappingMaxInput(-0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingEnabled(true);
         angleController.setFeedbackDevice(azimuthEncoder);
+        azimuthMotor.setCANTimeout(10);
         azimuthMotor.burnFlash();
+    }
+
+    private void configueCANcoder(){
+        absolutePositionSignal = absoluteEncoder.getAbsolutePosition();
+        BaseStatusSignal.setUpdateFrequencyForAll(50.0, absolutePositionSignal);
+        absoluteEncoder.optimizeBusUtilization();
     }
 
     public Rotation2d getAbsolutePosistion(){

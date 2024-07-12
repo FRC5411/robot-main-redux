@@ -3,7 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.drive;
-/** Add your docs here. */
+/** 
+ * This is a record, which functions as a immutable data class to store values
+ * Values can be called from ModuleConstants using '.constant()'
+ */
 public record ModuleConstants(
     int azimuthID,
     int driveID,
