@@ -41,10 +41,10 @@ public class Swerve extends SubsystemBase {
     zeroHeading();
 
     modules = new SwerveModule[]{
-      FL = new SwerveModule("Front Left", SwerveConstants.FLModule.constants),
-      FR = new SwerveModule("Front Right", SwerveConstants.FRModule.constants),
-      BL = new SwerveModule("Back Left", SwerveConstants.BLModule.constants),
-      BR = new SwerveModule("Back Right", SwerveConstants.BRModule.constants)
+      FL = new SwerveModule("Front Left", 0, SwerveConstants.FLModule.constants),
+      FR = new SwerveModule("Front Right", 1, SwerveConstants.FRModule.constants),
+      BL = new SwerveModule("Back Left", 2, SwerveConstants.BLModule.constants),
+      BR = new SwerveModule("Back Right", 3, SwerveConstants.BRModule.constants)
     };
 
     kinematics = new SwerveDriveKinematics(
@@ -69,10 +69,10 @@ public class Swerve extends SubsystemBase {
   public SwerveModulePosition[] getSwerveModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
 
-    for(int i = 0; i < 4; i++){
-      states[i] = new SwerveModulePosition(
-        modules[i].getDistance(), 
-        new Rotation2d(modules[i].getAzimuthPosistion()));
+    for(SwerveModule mod : modules){
+      states[mod.getNum()] = new SwerveModulePosition(
+        mod.getDistance(), 
+        new Rotation2d(mod.getAzimuthPosistion()));
     }
 
     return states;
@@ -83,8 +83,8 @@ public class Swerve extends SubsystemBase {
   }
 
   public void moveDriveVolts(double demand){
-    for(int i = 0; i < 4; i++){
-      modules[i].setDriveVoltage(demand);
+    for(SwerveModule mod: modules){
+      mod.setDriveVoltage(demand);
     }
   }
 
@@ -109,16 +109,16 @@ public class Swerve extends SubsystemBase {
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveConstants.maxLinearSpeed);
 
-    for(int i = 0; i < 4; i++){
-      modules[i].setModuleState(swerveModuleStates[i]);
+    for(SwerveModule mod: modules){
+      mod.setModuleState(swerveModuleStates[mod.getNum()]);
     }
   }
 
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
 
-    for(int i = 0; i < 4; i++){
-      states[i] = modules[i].getModuleState();
+    for(SwerveModule mod: modules){
+      states[mod.getNum()] = mod.getModuleState();
     }
 
     return states;

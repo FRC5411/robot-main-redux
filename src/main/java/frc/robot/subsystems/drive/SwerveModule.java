@@ -45,10 +45,13 @@ public class SwerveModule extends SubsystemBase{
 
     public ModuleConstants constants;
 
+    private int num;
+
     private Rotation2d lastAngle;
 
-    public SwerveModule(String idName, ModuleConstants constants){
+    public SwerveModule(String idName, int num, ModuleConstants constants){
         this.idName = idName;
+        this.num = num;
 
         azimuthMotor = new CANSparkMax(constants.azimuthID(), MotorType.kBrushless);
         azimuthFlipped = constants.azimuthFlipped();
@@ -186,6 +189,10 @@ public class SwerveModule extends SubsystemBase{
     public double getDistance(){
         //TODO: Check if correct
         return driveEncoder.getPosition() / driveEncoder.getCountsPerRevolution() * (Math.PI * SwerveConstants.wheelDiameter);
+    }
+
+    public int getNum(){
+        return num;
     }
 
     public void periodic(){}
