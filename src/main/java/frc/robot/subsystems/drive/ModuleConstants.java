@@ -4,30 +4,12 @@
 
 package frc.robot.subsystems.drive;
 /** Add your docs here. */
-public class ModuleConstants {
-    public final int azimuthID; 
-    public final int driveID;
-    public final int encoderID;
-    public final double offset;
-    public final boolean azimuthFlipped;
-    public final boolean driveFlipped;
-    public final boolean absoluteFlipped;
-
-    public ModuleConstants(
-        int azimuthID, 
-        int driveID, 
-        int encoderID, 
-        double offset, 
-        boolean azimuthFlipped, 
-        boolean driveFlipped,
-        boolean absoluteFlipped){
-
-        this.azimuthID = azimuthID;
-        this.driveID = driveID;
-        this.encoderID = encoderID;
-        this.offset = offset;
-        this.azimuthFlipped = azimuthFlipped;
-        this.driveFlipped = driveFlipped;
-        this.absoluteFlipped = absoluteFlipped;
-    }
-}
+public record ModuleConstants(
+    int azimuthID,
+    int driveID,
+    int encoderID,
+    double offset,
+    boolean azimuthFlipped,
+    boolean driveFlipped,
+    boolean absoluteFlipped    
+) {}
