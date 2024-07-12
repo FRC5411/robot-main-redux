@@ -40,12 +40,12 @@ public class Swerve extends SubsystemBase {
     gyro.clearStickyFaults();
     zeroHeading();
 
-    FL = new SwerveModule("Front Left", SwerveConstants.FLModule.constants);
-    FR = new SwerveModule("Front Right", SwerveConstants.FRModule.constants);
-    BL = new SwerveModule("Back Left", SwerveConstants.BLModule.constants);
-    BR = new SwerveModule("Back Right", SwerveConstants.BRModule.constants);
-
-    modules = new SwerveModule[]{FL, FR, BL, BR};
+    modules = new SwerveModule[]{
+      FL = new SwerveModule("Front Left", SwerveConstants.FLModule.constants),
+      FR = new SwerveModule("Front Right", SwerveConstants.FRModule.constants),
+      BL = new SwerveModule("Back Left", SwerveConstants.BLModule.constants),
+      BR = new SwerveModule("Back Right", SwerveConstants.BRModule.constants)
+    };
 
     kinematics = new SwerveDriveKinematics(
       new Translation2d(SwerveConstants.wheelBase / 2.0, SwerveConstants.trackWidth / 2.0),
