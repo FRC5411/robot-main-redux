@@ -18,7 +18,15 @@ public class TeleopDrive extends Command {
   private DoubleSupplier theta;
   private BooleanSupplier field;
 
-  /** Creates a new TeleopDrive. */
+  /**
+   * This method will take in the raw inputs of the xbox controller and process and pass them into the drive method of the Swerve subsystem 
+   * Then the needed velocity and posistion for the drive and azimuth respecitvely are calcauted and applied
+   * @param drive Swerve subsystem that needs to be passed in
+   * @param x Xbox controller 'x' demand or Left Y joystickto move back and forth
+   * @param y Xbox controller 'y' demand or Left X joystick to move right and left
+   * @param theta Xbox controller 'theta' demand or Right X joystick for rotation
+   * @param field Xbox controller input of a boolean determining if the robot should be field or robot oriented
+   */
   public TeleopDrive(Swerve drive, DoubleSupplier x, DoubleSupplier y, DoubleSupplier theta, BooleanSupplier field) {
     this.drive = drive;
     this.x = x;
@@ -40,6 +48,8 @@ public class TeleopDrive extends Command {
     double thetaVal = theta.getAsDouble();
 
     drive.drive(
+      // The value as of now is between 0 and 1 // 
+      // Multiplying by the max speed helps finding the real demand that was applied //
       new Translation2d(xVal, yVal).times(SwerveConstants.maxLinearSpeed), 
       thetaVal, 
       !field.getAsBoolean()

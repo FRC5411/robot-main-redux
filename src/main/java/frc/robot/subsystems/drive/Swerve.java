@@ -41,12 +41,12 @@ public class Swerve extends SubsystemBase {
     gyro.clearStickyFaults();
     zeroHeading();
 
-    modules = new SwerveModule[]{
-      FL = new SwerveModule("Front Left", 0, SwerveConstants.FLModule.constants),
-      FR = new SwerveModule("Front Right", 1, SwerveConstants.FRModule.constants),
-      BL = new SwerveModule("Back Left", 2, SwerveConstants.BLModule.constants),
-      BR = new SwerveModule("Back Right", 3, SwerveConstants.BRModule.constants)
-    };
+    FL = new SwerveModule("Front Left", 0, SwerveConstants.FLModule.constants);
+    FR = new SwerveModule("Front Right", 1, SwerveConstants.FRModule.constants);
+    BL = new SwerveModule("Back Left", 2, SwerveConstants.BLModule.constants);
+    BR = new SwerveModule("Back Right", 3, SwerveConstants.BRModule.constants);
+
+    modules = new SwerveModule[]{FL, FR, BL, BR};
 
     kinematics = new SwerveDriveKinematics(
       new Translation2d(SwerveConstants.wheelBase / 2.0, SwerveConstants.trackWidth / 2.0),
@@ -67,7 +67,7 @@ public class Swerve extends SubsystemBase {
   public void periodic() {
     odometry.update(getYaw(), getSwerveModulePositions());
 
-    field2d.setRobotPose(getPose());
+    field2d.setRobotPose(getPoseMeters());
 
     LoggedTunableNumber.ifChanged(
       hashCode(), 
@@ -79,6 +79,14 @@ public class Swerve extends SubsystemBase {
     SmartDashboard.putNumber("Drive/Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
   }
 
+  /**
+   * Sets all the swerve modules to the required posistion and velocity to be able to carry out the demands of the controller
+   * Field relative means the robot will always move forward in the same direction regardless of heading compared to robotrelative which is the oppposite
+   * This function gets its inputs from the joystick and is then fed into each swerve module 
+   * @param translation : the demand of how much we want to move the robot right, left, forward, and back
+   * @param rotation : the demand of how much we want to rotate the robot
+   * @param fieldRelative : if you want the robot to be field oriented or robot oriented
+   */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     final SwerveModuleState[] swerveModuleStates;
       if(fieldRelative){
@@ -105,6 +113,10 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  /**
+   * Returns the distance driven by the drive motor and the azimuth posistion for each module
+   * @return an array of each SwerveModulePosistion in order of FL, FR, BL, and BR
+   */
   public SwerveModulePosition[] getSwerveModulePositions() {
     SwerveModulePosition[] states = new SwerveModulePosition[4];
 
@@ -117,6 +129,10 @@ public class Swerve extends SubsystemBase {
     return states;
   }
 
+  /**
+   * Returns the velocity of the drive motor and the azimuth posistion for each module
+   * @return an array of each SwerveModuleState in order of FL, FR, BL, and BR
+   */
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
 
@@ -127,31 +143,54 @@ public class Swerve extends SubsystemBase {
     return states;
   }
 
+  /**
+   * Will reset the odometry of the robot
+   */
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(getYaw(), getSwerveModulePositions(), pose);
   }
 
+  /**
+   * Will move the drive motor of each swerve module by the demand passed in
+   * This method is used to find the 'static friction' or kS for Feed forward on drive
+   * @param demand amount of voltage passed on to each module
+   */
   public void moveDriveVolts(double demand){
     for(SwerveModule mod: modules){
       mod.setDriveVoltage(demand);
     }
   }
 
+  /**
+   * Sets the gyro yaw to 0 
+   */
   public void zeroHeading(){
     gyro.setYaw(0);
   }
 
+  /**
+   * Sets the kP value of the azimuth controller
+   * @param val value for kP for the azimuth controler
+   */
   public void setAzimuthP(double val){
     for(SwerveModule mod : modules){
       mod.setAzimuthPIDController(val, 0, 0);
     }
   }
 
+  /**
+   * This method returns the current rotational posistion of the robot or the 'yaw
+   * @return get the yaw of the robot from the gyro
+   */
   public Rotation2d getYaw(){
     return new Rotation2d(gyro.getYaw().getValueAsDouble());
   }
 
-  public Pose2d getPose() {
+  /**
+   * This method gets the estimaged pose of the robot
+   * @return estimated pose of the robot in meters
+   */
+  public Pose2d getPoseMeters() {
     return odometry.getPoseMeters();
   }
 

@@ -90,6 +90,9 @@ public class SwerveModule extends SubsystemBase{
 
     }
 
+    /**
+     * Configures the drive motor of the swerve module by putting neccessary limits and configurations
+     */
     private void configureDrive(){
         driveMotor.restoreFactoryDefaults();
         driveMotor.setCANTimeout(250);
@@ -106,6 +109,9 @@ public class SwerveModule extends SubsystemBase{
         driveMotor.burnFlash();
     }
 
+    /**
+     * Configures the azimuth motor of the swerve module by putting neccessary limits and configurations
+     */
     private void configureAzimuth(){
         azimuthMotor.restoreFactoryDefaults();
         azimuthMotor.setCANTimeout(250);
@@ -134,26 +140,49 @@ public class SwerveModule extends SubsystemBase{
         azimuthMotor.burnFlash();
     }
 
+    /**
+     * Configures the CANcoder to update every 50 hertz
+     * This allows for more accurate and up-to-date posistional information
+     */
     private void configueCANcoder(){
         absolutePositionSignal = absoluteEncoder.getAbsolutePosition();
         BaseStatusSignal.setUpdateFrequencyForAll(50.0, absolutePositionSignal);
         absoluteEncoder.optimizeBusUtilization();
     }
 
+    /** 
+     * Sets the relative encoder of the azimuth to the value of the absolute encoder on boot
+    */
     public void resetAzimuthPosistion(){
         azimuthEncoder.setPosition(getAbsolutePosistion().getRotations() * SwerveConstants.angleGearRatio);
     }
 
+    /**
+     * Sets the desired speed of the drive motor and desired angle of the azimuth for the swerve module
+     * @param state the raw desired state that is optimized and then passed into the drive and azimuth motor
+     */
     public void setModuleState(SwerveModuleState state){
+        // The optimize function allows for a more efficent use of our azimuth
+        // Example: if the azimuth needs to move 270 degrees clockwise the optimize state will make sure the azimuth moves 90 degrees counter-clockwise
+        // This makes the azimuth never trun more than 90 degrees at once
         state = SwerveModuleState.optimize(state, getModuleState().angle);
-
+        
+        // Since the drive motor is being set in percentile output we need to take the desired speed and divide by max speed to get a value between 0 and 1
         driveMotor.set(state.speedMetersPerSecond / SwerveConstants.maxLinearSpeed);
 
         setAzimuthPosistion(state);
     }
 
+    /**
+     * Uses SparkPIDController to set the posistion of the azimuth motor 
+     * @param state contians the optimized desired angle to put the azimuth at
+     */
     public void setAzimuthPosistion(SwerveModuleState state){
         Rotation2d desiredAngle;
+
+        // This is to reduce jitter
+        // This makes sure that we are not constantly setting the azimuth posistion
+        // Stick drift/human error can cause a small demand in azimuth posistion when not needed
         if (Math.abs(state.speedMetersPerSecond) <= (SwerveConstants.maxLinearSpeed * 0.001)) {
             desiredAngle = lastAngle;
         }
@@ -161,79 +190,148 @@ public class SwerveModule extends SubsystemBase{
             desiredAngle = state.angle;
         }
 
-        // The controller takes in the demand as a rotation
-        angleController.setReference(desiredAngle.getDegrees(), ControlType.kPosition, 0);
+        // The controller takes in the demand as a rotation for posistional control
+        angleController.setReference(desiredAngle.getRotations(), ControlType.kPosition, 0);
 
         lastAngle = desiredAngle;
     }
 
+    /** 
+     * Sets up the desired constants for the azimuth PID controller
+     * @param p desired kP constant
+     * @param i desired kI constant
+     * @param d desired kD constant
+     */
     public void setAzimuthPIDController(double p, double i, double d){
         angleController.setP(p);
         angleController.setI(i);
         angleController.setD(d);
     }
 
+    /**
+     * Stops the swerve module if neccessary
+     */
     public void stop(){
         driveMotor.set(0);
         azimuthMotor.set(0);
     }
 
+    /**
+     * Returns the state of the module
+     * @return returns the drive velocity and the azimuth posistion in a SwerveModuleState
+     */
     public SwerveModuleState getModuleState(){
         return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAzimuthPosistion()));
     }
 
+    /**
+     * Set drive motor voltage
+     * @param demand amount of voltage between -12 and 12 to set to the motor
+     */
     public void setDriveVoltage(double demand){
         driveMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
     }
 
+    /**
+     * Set azimuth motor voltage
+     * @param demand amount of voltage between -12 and 12 to set to the motor
+     */
     public void setAzimuthVoltage(double demand){
         azimuthMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
     }
 
+    /**
+     * Get the posistion of the drive wheel
+     * @return returns the posistion of the drive wheel in rotations
+     */
     public double getDrivePosistion(){
         return driveEncoder.getPosition() / SwerveConstants.angleGearRatio;
     }
 
+    /**
+     * Get the velocity of the drive motor
+     * @return returns the velocity in rotations per minute
+     */
     public double getDriveVelocity(){
         return driveEncoder.getVelocity();
     }
 
+    /**
+     * Get the temperature of the drive motor in Farenheit
+     * @return returns the temperature of the motor
+     */
     public double getDriveTemperature(){
         return (driveMotor.getMotorTemperature() * (9.0/5.0)) + 32;
     }
 
+    /**
+     * Get the current voltage of the drive motor
+     * @return returns the amount of voltage on the drive motor
+     */
     public double getDriveVoltage(){
         return (driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
     }
 
+    /**
+     * Get the current amperage of the drive motor
+     * @return returns the amount of amps on the drive motor
+     */
     public double getDriveAmps(){
         return driveMotor.getAppliedOutput();
     }
 
+    /**
+     * Get the distance the drive motor traveled
+     * @return returns the distance traveled in meters
+     */
     public double getDriveDistanceMeters(){
         return (driveEncoder.getPosition() * SwerveConstants.wheelCircumference) / SwerveConstants.driveGearRatio;
     }
 
+    /**
+     * Get the posistion of the azimuth wheel
+     * @return returns the posistion of the azimuth wheel in rotations
+     */
     public double getAzimuthPosistion(){
         return azimuthEncoder.getPosition() / SwerveConstants.angleGearRatio;
     }
 
+    /**
+     * Get the velocity of the azimuth motor
+     * @return returns the velocity in rotations per minute
+     */
     public double getAzimuthVelocity(){
         return azimuthEncoder.getVelocity();
     }
 
+    /**
+     * Get the temperature of the azimuth motor in Farenheit
+     * @return returns the temperature of the motor
+     */
     public double getAzimuthTemperature(){
         return (azimuthMotor.getMotorTemperature() * (9.0/5.0)) + 32;
     }
 
+    /**
+     * Get the current voltage of the azimuth motor
+     * @return returns the amount of voltage on the drive motor
+     */
     public double getAzimuthVoltage(){
         return (azimuthMotor.getAppliedOutput() * azimuthMotor.getBusVoltage());
     }
 
+    /**
+     * Get the current amperage of the azimuth motor
+     * @return returns the amount of amps on the drive motor
+     */
     public double getAzimuthAmps(){
         return azimuthMotor.getAppliedOutput();
     }
 
+    /**
+     * Get the posiston of the CANCoder
+     * @return returns the posistion of the cancoder from -0.5 to 0.5 rotations
+     */
     public Rotation2d getAbsolutePosistion(){
         double val = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
         Rotation2d angle = Rotation2d.fromRotations(val).minus(offset);
@@ -241,10 +339,18 @@ public class SwerveModule extends SubsystemBase{
         return angle;
     }
 
+    /**
+     * Get the number of the swerve module
+     * @return number of the swerve module
+     */
     public int getNum(){
         return num;
     }
 
+    /**
+     * Get the name of the swerve module
+     * @return name of the swerve module
+     */
     public String getName(){
         return idName;
     }
