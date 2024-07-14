@@ -35,6 +35,7 @@ public class Swerve extends SubsystemBase {
 
   private static LoggedTunableNumber kAzimuthP;
 
+
   public Swerve() {
     gyro = new Pigeon2(SwerveConstants.pigeonID);
     gyro.clearStickyFaults();
@@ -62,30 +63,20 @@ public class Swerve extends SubsystemBase {
     kAzimuthP = new LoggedTunableNumber("Azimuth P", SwerveConstants.angleController.getP());
   }
 
-  public Rotation2d getYaw(){
-    return new Rotation2d(gyro.getYaw().getValueAsDouble());
-  }
+  @Override
+  public void periodic() {
+    odometry.update(getYaw(), getSwerveModulePositions());
 
-  public SwerveModulePosition[] getSwerveModulePositions() {
-    SwerveModulePosition[] states = new SwerveModulePosition[4];
+    field2d.setRobotPose(getPose());
 
-    for(SwerveModule mod : modules){
-      states[mod.getNum()] = new SwerveModulePosition(
-        mod.getDriveDistanceMeters(), 
-        new Rotation2d(mod.getAzimuthPosistion()));
-    }
+    LoggedTunableNumber.ifChanged(
+      hashCode(), 
+      () -> {setAzimuthP(kAzimuthP.get());}, 
+      kAzimuthP);
 
-    return states;
-  }
+    SmartDashboard.putNumber("Drive/Gyro Yaw", getYaw().getDegrees());
 
-  public void zeroHeading(){
-    gyro.setYaw(0);
-  }
-
-  public void moveDriveVolts(double demand){
-    for(SwerveModule mod: modules){
-      mod.setDriveVoltage(demand);
-    }
+    SmartDashboard.putNumber("Drive/Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
   }
 
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
@@ -114,6 +105,18 @@ public class Swerve extends SubsystemBase {
     }
   }
 
+  public SwerveModulePosition[] getSwerveModulePositions() {
+    SwerveModulePosition[] states = new SwerveModulePosition[4];
+
+    for(SwerveModule mod : modules){
+      states[mod.getNum()] = new SwerveModulePosition(
+        mod.getDriveDistanceMeters(), 
+        new Rotation2d(mod.getAzimuthPosistion()));
+    }
+
+    return states;
+  }
+
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
 
@@ -124,12 +127,18 @@ public class Swerve extends SubsystemBase {
     return states;
   }
 
-  public Pose2d getPose() {
-    return odometry.getPoseMeters();
-  }
-
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(getYaw(), getSwerveModulePositions(), pose);
+  }
+
+  public void moveDriveVolts(double demand){
+    for(SwerveModule mod: modules){
+      mod.setDriveVoltage(demand);
+    }
+  }
+
+  public void zeroHeading(){
+    gyro.setYaw(0);
   }
 
   public void setAzimuthP(double val){
@@ -138,21 +147,12 @@ public class Swerve extends SubsystemBase {
     }
   }
 
-  @Override
-  public void periodic() {
-    odometry.update(getYaw(), getSwerveModulePositions());
-
-    field2d.setRobotPose(getPose());
-
-    LoggedTunableNumber.ifChanged(
-      hashCode(), 
-      () -> {setAzimuthP(kAzimuthP.get());}, 
-      kAzimuthP);
-
-    SmartDashboard.putNumber("Drive/Gyro Yaw", getYaw().getDegrees());
-
-    SmartDashboard.putNumber("Drive/Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
+  public Rotation2d getYaw(){
+    return new Rotation2d(gyro.getYaw().getValueAsDouble());
   }
 
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
 
 }
