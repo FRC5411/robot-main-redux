@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.drive;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -28,8 +29,7 @@ public class SwerveConstants{
     public static final double maxLinearSpeed  = 4.60248;
     public static final double maxRotationalVelocity = maxLinearSpeed / robotRadius;
 
-
-    public static double angleP = 0.01;
+    public static PIDController angleController = new PIDController(0.1, 0, 0);
 
     public final class FLModule{
       public static final int driveMotorID = 11;

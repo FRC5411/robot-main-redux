@@ -59,7 +59,7 @@ public class Swerve extends SubsystemBase {
 
     SmartDashboard.putData(field2d);
 
-    kAzimuthP = new LoggedTunableNumber("Azimuth P", SwerveConstants.angleP);
+    kAzimuthP = new LoggedTunableNumber("Azimuth P", SwerveConstants.angleController.getP());
   }
 
   public Rotation2d getYaw(){
@@ -71,7 +71,7 @@ public class Swerve extends SubsystemBase {
 
     for(SwerveModule mod : modules){
       states[mod.getNum()] = new SwerveModulePosition(
-        mod.getDistance(), 
+        mod.getDriveDistanceMeters(), 
         new Rotation2d(mod.getAzimuthPosistion()));
     }
 
@@ -133,7 +133,9 @@ public class Swerve extends SubsystemBase {
   }
 
   public void setAzimuthP(double val){
-    SwerveConstants.angleP = val;
+    for(SwerveModule mod : modules){
+      mod.setAzimuthPIDController(val, 0, 0);
+    }
   }
 
   @Override
@@ -147,21 +149,9 @@ public class Swerve extends SubsystemBase {
       () -> {setAzimuthP(kAzimuthP.get());}, 
       kAzimuthP);
 
-    SmartDashboard.putNumber("Module / FR / ABSOULTE POS", FR.getAbsolutePosistion().getDegrees());
-    SmartDashboard.putNumber("Module / FR / RELATIVE POS", FR.getAzimuthPosistion());
+    SmartDashboard.putNumber("Drive/Gyro Yaw", getYaw().getDegrees());
 
-    SmartDashboard.putNumber("Module / FL / ABSOULTE POS", FL.getAbsolutePosistion().getDegrees());
-    SmartDashboard.putNumber("Module / FL / RELATIVE POS", FL.getAzimuthPosistion());
-
-    SmartDashboard.putNumber("Module / BR / ABSOULTE POS", BR.getAbsolutePosistion().getDegrees());
-    SmartDashboard.putNumber("Module / BR / RELATIVE POS", BR.getAzimuthPosistion());
-
-    SmartDashboard.putNumber("Module / BL / ABSOULTE POS", BL.getAbsolutePosistion().getDegrees());
-    SmartDashboard.putNumber("Module / BL / RELATIVE POS", BL.getAzimuthPosistion());
-
-    SmartDashboard.putNumber("Gyro Yaw", getYaw().getDegrees());
-
-    SmartDashboard.putNumber("Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("Drive/Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
   }
 
 
