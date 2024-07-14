@@ -72,7 +72,7 @@ public class SwerveModule extends SubsystemBase{
         SmartDashboard.putNumber(idName + "/Drive Motor/Current Amperage", getDriveAmps());
         SmartDashboard.putNumber(idName + "/Drive Motor/Distance Meters", getDriveDistanceMeters());
         SmartDashboard.putNumber(idName + "/Drive Motor/TemperatureFarenheit", getDriveTemperature());
-        SmartDashboard.putNumber(idName + "/Drive Motor/VelocityMPS", getDriveVelocity());
+        SmartDashboard.putNumber(idName + "/Drive Motor/VelocityMPS", getDriveVelocityMPS());
         SmartDashboard.putNumber(idName + "/Drive Motor/Voltage", getDriveVoltage());
 
         // Azimuth telemtry //
@@ -191,7 +191,10 @@ public class SwerveModule extends SubsystemBase{
         }
 
         // The controller takes in the demand as a rotation for posistional control
-        angleController.setReference(desiredAngle.getRotations(), ControlType.kPosition, 0);
+        angleController.setReference(
+            desiredAngle.getRotations() * SwerveConstants.angleGearRatio, 
+            ControlType.kPosition, 
+            0);
 
         lastAngle = desiredAngle;
     }
@@ -221,7 +224,7 @@ public class SwerveModule extends SubsystemBase{
      * @return returns the drive velocity and the azimuth posistion in a SwerveModuleState
      */
     public SwerveModuleState getModuleState(){
-        return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAzimuthPosistion()));
+        return new SwerveModuleState(getDriveVelocityMPS(), Rotation2d.fromRotations(getAzimuthPosistion()));
     }
 
     /**
@@ -245,15 +248,15 @@ public class SwerveModule extends SubsystemBase{
      * @return returns the posistion of the drive wheel in rotations
      */
     public double getDrivePosistion(){
-        return driveEncoder.getPosition() / SwerveConstants.angleGearRatio;
+        return driveEncoder.getPosition() / SwerveConstants.driveGearRatio;
     }
 
     /**
-     * Get the velocity of the drive motor
+     * Get the velocity of the drive motor in MPS
      * @return returns the velocity in rotations per minute
      */
-    public double getDriveVelocity(){
-        return driveEncoder.getVelocity();
+    public double getDriveVelocityMPS(){
+        return (driveEncoder.getVelocity() * SwerveConstants.wheelCircumference) / (60.0 * SwerveConstants.driveGearRatio);
     }
 
     /**
@@ -297,11 +300,11 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Get the velocity of the azimuth motor
+     * Get the velocity of the azimuth motor in RPM
      * @return returns the velocity in rotations per minute
      */
     public double getAzimuthVelocity(){
-        return azimuthEncoder.getVelocity();
+        return (azimuthEncoder.getVelocity()) / (SwerveConstants.angleGearRatio * 60) ;
     }
 
     /**
