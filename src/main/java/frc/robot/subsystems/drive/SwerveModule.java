@@ -83,7 +83,7 @@ public class SwerveModule extends SubsystemBase{
         SmartDashboard.putNumber(idName + "/Azimuth Motor/VelocityMPS", getAzimuthVelocity());
         SmartDashboard.putNumber(idName + "/Azimuth Motor/Voltage", getAzimuthVoltage());
 
-        // CANcoder Telemetry // 
+        // CANCoder Telemetry // 
         SmartDashboard.putBoolean(idName + "/Absolute Encoder/Connected",  BaseStatusSignal.refreshAll(absolutePositionSignal).isOK());
         SmartDashboard.putNumber(idName + "/Absolute Encoder/Posistion after offset",  getAbsolutePosistion().getRotations());
         SmartDashboard.putNumber(idName + "/Absolute Encoder/Raw Posistion",  absolutePositionSignal.getValueAsDouble());
@@ -114,6 +114,7 @@ public class SwerveModule extends SubsystemBase{
      */
     private void configureAzimuth(){
         azimuthMotor.restoreFactoryDefaults();
+        // This allows the motor some time to set configs // 
         azimuthMotor.setCANTimeout(250);
         azimuthMotor.setInverted(azimuthFlipped);
         azimuthMotor.setSmartCurrentLimit(30);
@@ -122,6 +123,7 @@ public class SwerveModule extends SubsystemBase{
 
         azimuthEncoder = azimuthMotor.getEncoder();
         resetAzimuthPosistion();
+        // This allows for more accurate and up-to-date readings //
         azimuthEncoder.setMeasurementPeriod(20);
         azimuthEncoder.setAverageDepth(2);
 
@@ -132,9 +134,11 @@ public class SwerveModule extends SubsystemBase{
             SwerveConstants.angleController.getI(),
             SwerveConstants.angleController.getD());
 
+        // This three lines allow the controller to know the range of its movement // 
         angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingEnabled(true);
+
         angleController.setFeedbackDevice(azimuthEncoder);
         azimuthMotor.setCANTimeout(10);
         azimuthMotor.burnFlash();

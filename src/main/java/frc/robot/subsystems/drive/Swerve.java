@@ -89,6 +89,8 @@ public class Swerve extends SubsystemBase {
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
     final SwerveModuleState[] swerveModuleStates;
+
+    // This is for if we want field relative drive // 
       if(fieldRelative){
         swerveModuleStates = kinematics.toSwerveModuleStates(
           (ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -98,6 +100,7 @@ public class Swerve extends SubsystemBase {
             getYaw())));
       }
 
+      // This is for if we want robot relative drive //
       else{
         swerveModuleStates = kinematics.toSwerveModuleStates(
           (new ChassisSpeeds(
@@ -131,7 +134,7 @@ public class Swerve extends SubsystemBase {
 
   /**
    * Returns the velocity of the drive motor and the azimuth posistion for each module
-   * @return an array of each SwerveModuleState in order of FL, FR, BL, and BR
+   * @return An array of each SwerveModuleState in order of FL, FR, BL, and BR
    */
   public SwerveModuleState[] getSwerveModuleStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
