@@ -8,6 +8,7 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
@@ -22,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Add your docs here. */
 public class SwerveModule extends SubsystemBase{
-    public String idName;
+
     private CANSparkMax azimuthMotor;
     private CANSparkMax driveMotor;
 
@@ -43,6 +44,7 @@ public class SwerveModule extends SubsystemBase{
     public ModuleConstants constants;
 
     private int num;
+    private String idName;
 
     private Rotation2d lastAngle;
 
@@ -60,6 +62,31 @@ public class SwerveModule extends SubsystemBase{
         configureAzimuth();
 
         offset = Rotation2d.fromRotations(constants.offset());
+
+    }
+
+    @Override
+    public void periodic(){
+        // Drive Telemetry //
+        SmartDashboard.putBoolean(idName + "/Drive Motor/Connected", driveMotor.getLastError().equals(REVLibError.kOk));
+        SmartDashboard.putNumber(idName + "/Drive Motor/Current Amperage", getDriveAmps());
+        SmartDashboard.putNumber(idName + "/Drive Motor/Distance Meters", getDriveDistanceMeters());
+        SmartDashboard.putNumber(idName + "/Drive Motor/TemperatureFarenheit", getDriveTemperature());
+        SmartDashboard.putNumber(idName + "/Drive Motor/VelocityMPS", getDriveVelocity());
+        SmartDashboard.putNumber(idName + "/Drive Motor/Voltage", getDriveVoltage());
+
+        // Azimuth telemtry //
+        SmartDashboard.putBoolean(idName + "/Azimuth Motor/Connected", azimuthMotor.getLastError().equals(REVLibError.kOk));
+        SmartDashboard.putNumber(idName + "/Azimuth Motor/Current Amperage", getAzimuthAmps());
+        SmartDashboard.putNumber(idName + "/Azimuth Motor/Posistion Meters", getAzimuthPosistion());
+        SmartDashboard.putNumber(idName + "/Azimuth Motor/TemperatureFarenheit", getAzimuthTemperature());
+        SmartDashboard.putNumber(idName + "/Azimuth Motor/VelocityMPS", getAzimuthVelocity());
+        SmartDashboard.putNumber(idName + "/Azimuth Motor/Voltage", getAzimuthVoltage());
+
+        // CANcoder Telemetry // 
+        SmartDashboard.putBoolean(idName + "/Absolute Encoder/Connected",  BaseStatusSignal.refreshAll(absolutePositionSignal).isOK());
+        SmartDashboard.putNumber(idName + "/Absolute Encoder/Posistion after offset",  getAbsolutePosistion().getRotations());
+        SmartDashboard.putNumber(idName + "/Absolute Encoder/Raw Posistion",  absolutePositionSignal.getValueAsDouble());
 
     }
 
@@ -95,9 +122,10 @@ public class SwerveModule extends SubsystemBase{
 
         angleController = azimuthMotor.getPIDController();
         setAzimuthPIDController(
-            SwerveConstants.angleP,
-            0,
-            0);
+            SwerveConstants.angleController.getP(),
+            SwerveConstants.angleController.getI(),
+            SwerveConstants.angleController.getD());
+
         angleController.setPositionPIDWrappingMinInput(-0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingMaxInput(0.5 * SwerveConstants.angleGearRatio);
         angleController.setPositionPIDWrappingEnabled(true);
@@ -112,40 +140,9 @@ public class SwerveModule extends SubsystemBase{
         absoluteEncoder.optimizeBusUtilization();
     }
 
-    public Rotation2d getAbsolutePosistion(){
-        double val = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
-        SmartDashboard.putNumber("Drive/Val", val);
-        Rotation2d angle = Rotation2d.fromRotations(val).minus(offset);
-
-        return angle;
-    }
-
-    public double getDrivePosistion(){
-        return driveEncoder.getPosition();
-    }
-
-    public double getDriveVelocity(){
-        return driveEncoder.getVelocity();
-    }
-
-    public double getAzimuthPosistion(){
-        return azimuthEncoder.getPosition() / SwerveConstants.angleGearRatio;
-    }
-
-    public CANcoder getCANCoder(){
-        return absoluteEncoder;
-    }
-
     public void resetAzimuthPosistion(){
-        azimuthEncoder.setPosition(getAbsolutePosistion().getDegrees() * SwerveConstants.angleGearRatio);
+        azimuthEncoder.setPosition(getAbsolutePosistion().getRotations() * SwerveConstants.angleGearRatio);
     }
-
-    public void setAzimuthPIDController(double p, double i, double d){
-        angleController.setP(p);
-        angleController.setI(i);
-        angleController.setD(d);
-    }
-
 
     public void setModuleState(SwerveModuleState state){
         state = SwerveModuleState.optimize(state, getModuleState().angle);
@@ -170,8 +167,10 @@ public class SwerveModule extends SubsystemBase{
         lastAngle = desiredAngle;
     }
 
-    public void setDriveVoltage(double demand){
-        driveMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
+    public void setAzimuthPIDController(double p, double i, double d){
+        angleController.setP(p);
+        angleController.setI(i);
+        angleController.setD(d);
     }
 
     public void stop(){
@@ -183,14 +182,70 @@ public class SwerveModule extends SubsystemBase{
         return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getAzimuthPosistion()));
     }
 
-    public double getDistance(){
-        //TODO: Check if correct
-        return driveEncoder.getPosition() / driveEncoder.getCountsPerRevolution() * (Math.PI * SwerveConstants.wheelDiameter);
+    public void setDriveVoltage(double demand){
+        driveMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
+    }
+
+    public void setAzimuthVoltage(double demand){
+        azimuthMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
+    }
+
+    public double getDrivePosistion(){
+        return driveEncoder.getPosition() / SwerveConstants.angleGearRatio;
+    }
+
+    public double getDriveVelocity(){
+        return driveEncoder.getVelocity();
+    }
+
+    public double getDriveTemperature(){
+        return (driveMotor.getMotorTemperature() * (9.0/5.0)) + 32;
+    }
+
+    public double getDriveVoltage(){
+        return (driveMotor.getAppliedOutput() * driveMotor.getBusVoltage());
+    }
+
+    public double getDriveAmps(){
+        return driveMotor.getAppliedOutput();
+    }
+
+    public double getDriveDistanceMeters(){
+        return (driveEncoder.getPosition() * SwerveConstants.wheelCircumference) / SwerveConstants.driveGearRatio;
+    }
+
+    public double getAzimuthPosistion(){
+        return azimuthEncoder.getPosition() / SwerveConstants.angleGearRatio;
+    }
+
+    public double getAzimuthVelocity(){
+        return azimuthEncoder.getVelocity();
+    }
+
+    public double getAzimuthTemperature(){
+        return (azimuthMotor.getMotorTemperature() * (9.0/5.0)) + 32;
+    }
+
+    public double getAzimuthVoltage(){
+        return (azimuthMotor.getAppliedOutput() * azimuthMotor.getBusVoltage());
+    }
+
+    public double getAzimuthAmps(){
+        return azimuthMotor.getAppliedOutput();
+    }
+
+    public Rotation2d getAbsolutePosistion(){
+        double val = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
+        Rotation2d angle = Rotation2d.fromRotations(val).minus(offset);
+
+        return angle;
     }
 
     public int getNum(){
         return num;
     }
 
-    public void periodic(){}
+    public String getName(){
+        return idName;
+    }
 }
