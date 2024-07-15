@@ -52,6 +52,8 @@ public class SwerveModule extends SubsystemBase{
         this.idName = idName;
         this.num = num;
 
+        offset = Rotation2d.fromRotations(constants.offset());
+
         driveMotor = new CANSparkMax(constants.driveID(), MotorType.kBrushless);
         configureDrive();
 
@@ -60,9 +62,6 @@ public class SwerveModule extends SubsystemBase{
 
         azimuthMotor = new CANSparkMax(constants.azimuthID(), MotorType.kBrushless);
         configureAzimuth();
-
-        offset = Rotation2d.fromRotations(constants.offset());
-
     }
 
     @Override
@@ -182,7 +181,8 @@ public class SwerveModule extends SubsystemBase{
      * @param state contians the optimized desired angle to put the azimuth at
      */
     public void setAzimuthPosistion(SwerveModuleState state){
-        Rotation2d desiredAngle;
+        // Extaniate to avoid null pointer // 
+        Rotation2d desiredAngle = state.angle;
 
         // This is to reduce jitter
         // This makes sure that we are not constantly setting the azimuth posistion
@@ -284,7 +284,7 @@ public class SwerveModule extends SubsystemBase{
      * @return returns the amount of amps on the drive motor
      */
     public double getDriveAmps(){
-        return driveMotor.getAppliedOutput();
+        return driveMotor.getOutputCurrent();
     }
 
     /**
@@ -332,7 +332,7 @@ public class SwerveModule extends SubsystemBase{
      * @return returns the amount of amps on the drive motor
      */
     public double getAzimuthAmps(){
-        return azimuthMotor.getAppliedOutput();
+        return azimuthMotor.getOutputCurrent();
     }
 
     /**
@@ -347,7 +347,6 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Get the number of the swerve module
      * @return number of the swerve module
      */
     public int getNum(){
@@ -355,7 +354,6 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Get the name of the swerve module
      * @return name of the swerve module
      */
     public String getName(){

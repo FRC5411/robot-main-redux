@@ -8,6 +8,9 @@
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "TunableNumbers": {
+          "open": true
+        },
         "open": true
       }
     }
