@@ -32,7 +32,7 @@ public class RobotContainer {
   }
 
   private double applyDeadband(double demand){
-    if(-0.5 < demand && demand < 0.5){
+    if(-0.2 < demand && demand < 0.2){
       return 0;
     }
 

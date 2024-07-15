@@ -225,7 +225,7 @@ public class SwerveModule extends SubsystemBase{
 
     /**
      * Returns the state of the module
-     * @return returns the drive velocity and the azimuth posistion in a SwerveModuleState
+     * @return returns the drive velocity in metters per second and the azimuth posistion in rotations in a SwerveModuleState
      */
     public SwerveModuleState getModuleState(){
         return new SwerveModuleState(getDriveVelocityMPS(), Rotation2d.fromRotations(getAzimuthPosistion()));
@@ -257,7 +257,7 @@ public class SwerveModule extends SubsystemBase{
 
     /**
      * Get the velocity of the drive motor in MPS
-     * @return returns the velocity in rotations per minute
+     * @return returns the velocity in meters per second
      */
     public double getDriveVelocityMPS(){
         return (driveEncoder.getVelocity() * SwerveConstants.wheelCircumference) / (60.0 * SwerveConstants.driveGearRatio);
