@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,8 +39,8 @@ public class Swerve extends SubsystemBase {
 
   public Swerve() {
     gyro = new Pigeon2(SwerveConstants.pigeonID);
-    gyro.clearStickyFaults();
-    zeroHeading();
+    gyro.getConfigurator().apply(new Pigeon2Configuration());
+    gyro.getConfigurator().setYaw(0);
 
     FL = new SwerveModule("Front Left", 0, SwerveConstants.FLModule.constants);
     FR = new SwerveModule("Front Right", 1, SwerveConstants.FRModule.constants);
@@ -168,7 +169,7 @@ public class Swerve extends SubsystemBase {
    * Sets the gyro yaw to 0 
    */
   public void zeroHeading(){
-    gyro.setYaw(0);
+    gyro.getConfigurator().setYaw(0);
   }
 
   /**

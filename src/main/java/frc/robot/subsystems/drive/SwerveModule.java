@@ -240,14 +240,6 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Set azimuth motor voltage
-     * @param demand amount of voltage between -12 and 12 to set to the motor
-     */
-    public void setAzimuthVoltage(double demand){
-        azimuthMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
-    }
-
-    /**
      * Get the posistion of the drive wheel
      * @return returns the posistion of the drive wheel in rotations
      */
@@ -296,6 +288,14 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
+     * Set azimuth motor voltage
+     * @param demand amount of voltage between -12 and 12 to set to the motor
+     */
+    public void setAzimuthVoltage(double demand){
+        azimuthMotor.setVoltage(MathUtil.clamp(demand, -12, 12));
+    }
+
+    /**
      * Get the posistion of the azimuth wheel
      * @return returns the posistion of the azimuth wheel in rotations
      */
@@ -304,8 +304,8 @@ public class SwerveModule extends SubsystemBase{
     }
 
     /**
-     * Get the velocity of the azimuth motor in RPM
-     * @return returns the velocity in rotations per minute
+     * Get the velocity of the azimuth motor in RPS
+     * @return returns the velocity in rotations per second
      */
     public double getAzimuthVelocity(){
         return (azimuthEncoder.getVelocity()) / (SwerveConstants.angleGearRatio * 60) ;
