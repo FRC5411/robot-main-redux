@@ -47,6 +47,13 @@ public class Swerve extends SubsystemBase {
     BL = new SwerveModule("Back Left", 2, SwerveConstants.BLModule.constants);
     BR = new SwerveModule("Back Right", 3, SwerveConstants.BRModule.constants);
 
+    gyro = new Pigeon2(SwerveConstants.pigeonID);
+    gyro.getConfigurator().apply(new Pigeon2Configuration());
+    gyro.getConfigurator().setYaw(0);
+    gyroYaw = gyro.getYaw();
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, gyroYaw);
+    gyro.optimizeBusUtilization();
+
     modules = new SwerveModule[]{FL, FR, BL, BR};
 
     kinematics = new SwerveDriveKinematics(
@@ -56,13 +63,6 @@ public class Swerve extends SubsystemBase {
       new Translation2d(-SwerveConstants.wheelBase / 2.0, -SwerveConstants.trackWidth / 2.0));
     
     odometry = new SwerveDriveOdometry(kinematics, getYaw(), getSwerveModulePositions());
-
-    gyro = new Pigeon2(SwerveConstants.pigeonID);
-    gyro.getConfigurator().apply(new Pigeon2Configuration());
-    gyro.getConfigurator().setYaw(0);
-    gyroYaw = gyro.getYaw();
-    BaseStatusSignal.setUpdateFrequencyForAll(50.0, gyroYaw);
-    gyro.optimizeBusUtilization();
 
     field2d = new Field2d();
 
@@ -190,7 +190,7 @@ public class Swerve extends SubsystemBase {
   }
 
   /**
-   * This method returns the current rotational posistion of the robot or the 'yaw
+   * This method returns the current rotational posistion of the robot or the 'yaw'
    * @return get the yaw of the robot from the gyro
    */
   public Rotation2d getYaw(){
