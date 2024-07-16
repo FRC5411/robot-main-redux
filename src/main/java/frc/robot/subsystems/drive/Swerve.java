@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 
@@ -28,6 +30,8 @@ public class Swerve extends SubsystemBase {
   private final SwerveModule BL;
 
   private final Pigeon2 gyro;
+  private final StatusSignal<Double> gyroYaw;
+
   private final SwerveDriveKinematics kinematics;
   private final SwerveDriveOdometry odometry;
 
@@ -38,10 +42,6 @@ public class Swerve extends SubsystemBase {
 
 
   public Swerve() {
-    gyro = new Pigeon2(SwerveConstants.pigeonID);
-    gyro.getConfigurator().apply(new Pigeon2Configuration());
-    gyro.getConfigurator().setYaw(0);
-
     FL = new SwerveModule("Front Left", 0, SwerveConstants.FLModule.constants);
     FR = new SwerveModule("Front Right", 1, SwerveConstants.FRModule.constants);
     BL = new SwerveModule("Back Left", 2, SwerveConstants.BLModule.constants);
@@ -56,6 +56,13 @@ public class Swerve extends SubsystemBase {
       new Translation2d(-SwerveConstants.wheelBase / 2.0, -SwerveConstants.trackWidth / 2.0));
     
     odometry = new SwerveDriveOdometry(kinematics, getYaw(), getSwerveModulePositions());
+
+    gyro = new Pigeon2(SwerveConstants.pigeonID);
+    gyro.getConfigurator().apply(new Pigeon2Configuration());
+    gyro.getConfigurator().setYaw(0);
+    gyroYaw = gyro.getYaw();
+    BaseStatusSignal.setUpdateFrequencyForAll(50.0, gyroYaw);
+    gyro.optimizeBusUtilization();
 
     field2d = new Field2d();
 
@@ -76,7 +83,7 @@ public class Swerve extends SubsystemBase {
       kAzimuthP);
 
     SmartDashboard.putNumber("Drive/Gyro Yaw", getYaw().getDegrees());
-
+    SmartDashboard.putBoolean("Drive/Gyro Connected", BaseStatusSignal.refreshAll(gyroYaw).isOK());
     SmartDashboard.putNumber("Drive/Pose Estimate Yaw", odometry.getPoseMeters().getRotation().getDegrees());
   }
 
@@ -187,7 +194,7 @@ public class Swerve extends SubsystemBase {
    * @return get the yaw of the robot from the gyro
    */
   public Rotation2d getYaw(){
-    return new Rotation2d(gyro.getYaw().getValueAsDouble());
+    return new Rotation2d(gyroYaw.getValueAsDouble());
   }
 
   /**
