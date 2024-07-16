@@ -23,6 +23,7 @@ public class RobotContainer {
   public RobotContainer() {
     swerve.setDefaultCommand(
       new TeleopDrive(
+        // Put negative sings inside of the method in the lambda to flip directions for robot movement //
         swerve, 
         () -> applyDeadband(pilot.getLeftY()), 
         () -> applyDeadband(pilot.getLeftX()), 
@@ -31,6 +32,7 @@ public class RobotContainer {
     configureBindings();
   }
 
+  // Fix the deadband depending on how bad the the controller is // 
   private double applyDeadband(double demand){
     if(-0.2 < demand && demand < 0.2){
       return 0;
@@ -41,6 +43,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Find the minimum voltage needed to move robot // 
+    // Which will help find kS //
     pilot.a().onTrue(new InstantCommand(() -> {swerve.moveDriveVolts(2);}))
     .onFalse(new InstantCommand(() -> swerve.moveDriveVolts(0)));
 

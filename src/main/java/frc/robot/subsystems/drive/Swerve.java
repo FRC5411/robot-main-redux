@@ -96,7 +96,7 @@ public class Swerve extends SubsystemBase {
    * @param fieldRelative : if you want the robot to be field oriented or robot oriented
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative) {
-    final SwerveModuleState[] swerveModuleStates;
+    SwerveModuleState[] swerveModuleStates;
 
     // This is for if we want field relative drive // 
       if(fieldRelative){
@@ -119,8 +119,8 @@ public class Swerve extends SubsystemBase {
 
     SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, SwerveConstants.maxLinearSpeed);
 
-    for(SwerveModule mod: modules){
-      mod.setModuleState(swerveModuleStates[mod.getNum()]);
+    for(int i = 0; i < 4; i++){
+      modules[i].setModuleState(swerveModuleStates[i]);
     }
   }
 

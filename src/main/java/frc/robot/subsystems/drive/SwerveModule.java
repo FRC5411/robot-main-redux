@@ -181,26 +181,23 @@ public class SwerveModule extends SubsystemBase{
      * @param state contians the optimized desired angle to put the azimuth at
      */
     public void setAzimuthPosistion(SwerveModuleState state){
-        // Extaniate to avoid null pointer // 
-        Rotation2d desiredAngle = state.angle;
-
         // This is to reduce jitter
         // This makes sure that we are not constantly setting the azimuth posistion
         // Stick drift/human error can cause a small demand in azimuth posistion when not needed
         if (Math.abs(state.speedMetersPerSecond) <= (SwerveConstants.maxLinearSpeed * 0.001)) {
-            desiredAngle = lastAngle;
+            state.angle = lastAngle;
         }
         else {
-            desiredAngle = state.angle;
+            state.angle = state.angle;
         }
 
         // The controller takes in the demand as a rotation for posistional control
         angleController.setReference(
-            desiredAngle.getRotations() * SwerveConstants.angleGearRatio, 
+            state.angle.getRotations() * SwerveConstants.angleGearRatio, 
             ControlType.kPosition, 
             0);
 
-        lastAngle = desiredAngle;
+        lastAngle = state.angle;
     }
 
     /** 
