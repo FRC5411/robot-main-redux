@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems.drive;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+
 /** 
  * This is a record, which functions as a immutable data class to store values
  * Values can be called from ModuleConstants using '.constant()'
@@ -18,7 +21,7 @@ public record ModuleConstants(
     int azimuthID,
     int driveID,
     int encoderID,
-    double offset,
+    Rotation2d offset,
     boolean azimuthFlipped,
     boolean driveFlipped,
     boolean absoluteFlipped    

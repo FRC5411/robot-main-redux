@@ -1,0 +1,59 @@
+{
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        ".metadata": {
+          "open": true
+        },
+        "open": true
+      },
+      "SmartDashboard": {
+        "Back Left": {
+          "Absolute Encoder": {
+            "open": true
+          },
+          "Azimuth Motor": {
+            "open": true
+          },
+          "open": true
+        },
+        "Back Right": {
+          "Azimuth Motor": {
+            "open": true
+          }
+        },
+        "Front Left": {
+          "Absolute Encoder": {
+            "open": true
+          },
+          "Azimuth Motor": {
+            "open": true
+          },
+          "Drive Motor": {
+            "open": true
+          }
+        },
+        "Front Right": {
+          "Absolute Encoder": {
+            "open": true
+          },
+          "Azimuth Motor": {
+            "open": true
+          }
+        },
+        "open": true
+      }
+    },
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Field": "Field2d"
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  },
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "5411"
+  }
+}

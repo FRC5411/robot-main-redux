@@ -44,10 +44,17 @@ public class RobotContainer {
   private void configureBindings() {
     // Find the minimum voltage needed to move robot // 
     // Which will help find kS //
-    pilot.a().onTrue(new InstantCommand(() -> {swerve.moveDriveVolts(2);}))
-    .onFalse(new InstantCommand(() -> swerve.moveDriveVolts(0)));
+    pilot.a().onTrue(new InstantCommand(() -> {resetModules();}));
 
     pilot.x().onTrue(new InstantCommand(() -> swerve.zeroHeading()));
+
+  }
+
+  public void resetModules(){
+    swerve.FR.resetAzimuthPosistion();
+    swerve.FL.resetAzimuthPosistion();
+    swerve.BR.resetAzimuthPosistion();
+    swerve.BL.resetAzimuthPosistion();
   }
 
   /**

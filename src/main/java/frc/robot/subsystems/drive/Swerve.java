@@ -24,10 +24,10 @@ import frc.robot.util.debugging.LoggedTunableNumber;
 
 public class Swerve extends SubsystemBase {
   /** Creates a new Swerve. */
-  private final SwerveModule FR;
-  private final SwerveModule FL;
-  private final SwerveModule BR;
-  private final SwerveModule BL;
+  public final SwerveModule FR;
+  public final SwerveModule FL;
+  public final SwerveModule BR;
+  public final SwerveModule BL;
 
   private final Pigeon2 gyro;
   private final StatusSignal<Double> gyroYaw;
@@ -47,7 +47,7 @@ public class Swerve extends SubsystemBase {
     BL = new SwerveModule("Back Left", 2, SwerveConstants.BLModule.constants);
     BR = new SwerveModule("Back Right", 3, SwerveConstants.BRModule.constants);
 
-    gyro = new Pigeon2(SwerveConstants.pigeonID);
+    gyro = new Pigeon2(SwerveConstants.pigeonID, "drivetrain");
     gyro.getConfigurator().apply(new Pigeon2Configuration());
     gyro.getConfigurator().setYaw(0);
     gyroYaw = gyro.getYaw();

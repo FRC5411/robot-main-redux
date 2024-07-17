@@ -6,7 +6,9 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.RelativeEncoder;
@@ -52,12 +54,14 @@ public class SwerveModule extends SubsystemBase{
         this.idName = idName;
         this.num = num;
 
-        offset = Rotation2d.fromRotations(constants.offset());
+        lastAngle = new Rotation2d();
+
+        offset = constants.offset();
 
         driveMotor = new CANSparkMax(constants.driveID(), MotorType.kBrushless);
         configureDrive();
 
-        absoluteEncoder = new CANcoder(constants.encoderID());
+        absoluteEncoder = new CANcoder(constants.encoderID(), "drivetrain");
         configueCANcoder();
 
         azimuthMotor = new CANSparkMax(constants.azimuthID(), MotorType.kBrushless);
@@ -77,15 +81,15 @@ public class SwerveModule extends SubsystemBase{
         // Azimuth telemtry //
         SmartDashboard.putBoolean(idName + "/Azimuth Motor/Connected", azimuthMotor.getLastError().equals(REVLibError.kOk));
         SmartDashboard.putNumber(idName + "/Azimuth Motor/Current Amperage", getAzimuthAmps());
-        SmartDashboard.putNumber(idName + "/Azimuth Motor/Posistion Meters", getAzimuthPosistion());
+        SmartDashboard.putNumber(idName + "/Azimuth Motor/Posistion", getAzimuthPosistion() * 360);
         SmartDashboard.putNumber(idName + "/Azimuth Motor/TemperatureFarenheit", getAzimuthTemperature());
         SmartDashboard.putNumber(idName + "/Azimuth Motor/VelocityMPS", getAzimuthVelocity());
         SmartDashboard.putNumber(idName + "/Azimuth Motor/Voltage", getAzimuthVoltage());
 
         // CANCoder Telemetry // 
         SmartDashboard.putBoolean(idName + "/Absolute Encoder/Connected",  BaseStatusSignal.refreshAll(absolutePositionSignal).isOK());
-        SmartDashboard.putNumber(idName + "/Absolute Encoder/Posistion after offset",  getAbsolutePosistion().getRotations());
-        SmartDashboard.putNumber(idName + "/Absolute Encoder/Raw Posistion",  absolutePositionSignal.getValueAsDouble());
+        SmartDashboard.putNumber(idName + "/Absolute Encoder/Posistion after offset",  getAbsolutePosistion().getDegrees());
+        SmartDashboard.putNumber(idName + "/Absolute Encoder/Raw Posistion",  absolutePositionSignal.getValueAsDouble() * 360);
 
     }
 
@@ -150,7 +154,13 @@ public class SwerveModule extends SubsystemBase{
     private void configueCANcoder(){
         absolutePositionSignal = absoluteEncoder.getAbsolutePosition();
         BaseStatusSignal.setUpdateFrequencyForAll(50.0, absolutePositionSignal);
+        // Using optimize bus utilization will make it so that any other Status singals cannot be pulled //
+        // ONLY THE STATUS SIGNAL ABOVE IS AVAILABLE FOR USE // 
         absoluteEncoder.optimizeBusUtilization();
+
+        // CANcoderConfiguration config = new CANcoderConfiguration();
+        // config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
+        // absoluteEncoder.getConfigurator().apply(config);
     }
 
     /** 
@@ -332,13 +342,15 @@ public class SwerveModule extends SubsystemBase{
         return azimuthMotor.getOutputCurrent();
     }
 
+    
+
     /**
      * Get the posiston of the CANCoder
      * @return returns the posistion of the cancoder from -0.5 to 0.5 rotations
      */
     public Rotation2d getAbsolutePosistion(){
-        double val = absoluteEncoder.getAbsolutePosition().getValueAsDouble();
-        Rotation2d angle = Rotation2d.fromRotations(val).minus(offset);
+
+        Rotation2d angle = Rotation2d.fromRotations(absolutePositionSignal.getValueAsDouble()).minus(offset);
 
         return angle;
     }
