@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.lib.util.loggingUtil.LogManager;
 import frc.lib.util.swerveUtil.CTREModuleState;
 import frc.lib.util.swerveUtil.RevSwerveModuleConstants;
 
@@ -48,7 +47,7 @@ public class SwerveMod implements SwerveModule
         configDriveMotor();
 
          /* Angle Encoder Config */
-        angleEncoder = new CANcoder(moduleConstants.cancoderID);
+        angleEncoder = new CANcoder(moduleConstants.cancoderID, "CTREBUS");
         configEncoders();
 
 
@@ -187,13 +186,21 @@ public class SwerveMod implements SwerveModule
     public Rotation2d getCanCoder()
     {
         
-        return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble());
+        return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValueAsDouble());
         //return getAngle();
     }
 
     public int getModuleNumber() 
     {
         return moduleNumber;
+    }
+
+    public CANSparkMax getDriveMotor(){
+        return mDriveMotor;
+    }
+
+    public CANSparkMax getAngleMotor(){
+        return mAngleMotor;
     }
 
     public void setModuleNumber(int moduleNumber) 
@@ -224,10 +231,5 @@ public class SwerveMod implements SwerveModule
             relDriveEncoder.getPosition(), 
             getAngle()
         );
-    }
-    @Override
-    public void Periodic(){
-        LogManager.addDouble(moduleNumber+" RelAngleEncoder",getAngle().getDegrees());
-        LogManager.addDouble(moduleNumber+" AbsoluteEncoder",getCanCoder().getDegrees());
     }
 }

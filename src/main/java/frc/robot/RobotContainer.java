@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.*;
-import frc.robot.subsystems.PoseEstimator;
+//import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.swerve.Swerve;
 
 /**
@@ -43,7 +43,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-    private final PoseEstimator s_PoseEstimator = new PoseEstimator();
+    //private final PoseEstimator s_PoseEstimator = new PoseEstimator();
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */

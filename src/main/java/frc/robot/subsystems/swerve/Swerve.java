@@ -54,7 +54,7 @@ public class Swerve extends SubsystemBase {
             new Pose2d(
                 originalSpeeds.vxMetersPerSecond * LOOP_TIME_S,
                 originalSpeeds.vyMetersPerSecond * LOOP_TIME_S,
-                Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S));
+                Rotation2d.fromRadians(originalSpeeds.omegaRadiansPerSecond * LOOP_TIME_S*3));
         Twist2d twistForPose = GeometryUtils.log(futureRobotPose);
         ChassisSpeeds updatedSpeeds =
             new ChassisSpeeds(
@@ -144,7 +144,9 @@ public class Swerve extends SubsystemBase {
         for(SwerveModule mod : mSwerveMods) {
             SmartDashboard.putNumber("REV Mod " + mod.getModuleNumber() + " Cancoder", mod.getCanCoder().getDegrees());
             SmartDashboard.putNumber("REV Mod " + mod.getModuleNumber() + " Integrated", mod.getPosition().angle.getDegrees());
-            SmartDashboard.putNumber("REV Mod " + mod.getModuleNumber() + " Velocity", mod.getState().speedMetersPerSecond);    
+            SmartDashboard.putNumber("REV Mod " + mod.getModuleNumber() + " Velocity", mod.getState().speedMetersPerSecond);   
+            SmartDashboard.putNumber("Rev Mod" + mod.getModuleNumber() + "Drive Amp", mod.getDriveMotor().getOutputCurrent()); 
+            SmartDashboard.putNumber("Rev Mod" + mod.getModuleNumber() + "Azimuth Amp", mod.getAngleMotor().getOutputCurrent()); 
         }
     }
 }

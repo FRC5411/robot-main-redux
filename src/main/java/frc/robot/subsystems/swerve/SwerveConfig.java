@@ -60,12 +60,12 @@ public class SwerveConfig
     public static final boolean driveMotorInvert = chosenModule.driveMotorInvert;
 
     /* Swerve Current Limiting */
-    public static final int angleContinuousCurrentLimit = 20;
+    public static final int angleContinuousCurrentLimit = 30;
     public static final int anglePeakCurrentLimit = 40;
     public static final double anglePeakCurrentDuration = 0.1;
     public static final boolean angleEnableCurrentLimit = true;
 
-    public static final int driveContinuousCurrentLimit = 35;
+    public static final int driveContinuousCurrentLimit = 40;
     public static final int drivePeakCurrentLimit = 60;
     public static final double drivePeakCurrentDuration = 0.1;
     public static final boolean driveEnableCurrentLimit = true;
@@ -76,13 +76,13 @@ public class SwerveConfig
     public static final double closedLoopRamp = 0.0;
 
     /* Angle Motor PID Values */
-    public static final double angleKP = 2.7;
+    public static final double angleKP = 0.195;
     public static final double angleKI = 0;
     public static final double angleKD = 0;
     public static final double angleKF = 0;
 
     /* Drive Motor PID Values */
-    public static final double driveKP = 0.002; 
+    public static final double driveKP = 0.0001; 
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
     public static final double driveKF = 0.0;

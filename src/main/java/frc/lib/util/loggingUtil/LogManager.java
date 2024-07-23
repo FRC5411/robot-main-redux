@@ -98,16 +98,16 @@ public class LogManager {
   /**
    * @deprecated Use {@link #addInt(String, int)} with a single value instead.
    */
-  @Deprecated
+ 
+
+  /**
+   * Logs a single int to the log. Do not use with the other addInt() that takes a int supplier.
+   *  @Deprecated
   public static void addInt(String name, IntSupplier logged) {
     IntegerLogEntry IntegerLog = new IntegerLogEntry(log, name);
     intLogs.add(IntegerLog);
     intValues.add(logged);
-  }
-
-  /**
-   * Logs a single int to the log. Do not use with the other addInt() that takes a int supplier.
-   * This will only log the value once, so it should be called periodically or when needed. If you have a function that consistently 
+  }This will only log the value once, so it should be called periodically or when needed. If you have a function that consistently 
    * returns values, it may be easier to use the int supplier log.
    * 
    * @param name The name of the log. Use / to create subdirectories, and keep names unique.
